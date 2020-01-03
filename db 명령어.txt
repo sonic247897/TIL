@@ -1,0 +1,537 @@
+create table PRODUCT(
+	pdno number primary key,
+	pdname varchar2(10),
+	pdsubname varchar2(10) NOT NULL, 
+	factno varchar2(5),
+	pddate date,
+	pdcost number,
+	pdprice number,
+	pdamount number
+);
+
+create table FACTORY(
+	factno varchar2(5) primary key,
+	factname varchar2(14) not null,
+	facloc varchar2(13)
+);
+
+create table STORE(
+	stono varchar2(5) primary key,
+	stoname varchar2(14) NOT NULL,
+	pdno number,
+	stamount number,
+	stsales number,
+	stprice number
+);
+
+----------------
+-- 대표문자를 쓸 때는 like을 써야 한다.
+select ename ||' : ' || job
+from emp
+where job = 'MANAGER' and hiredate like '81%';
+
+select empno, ename,  job, sal
+from emp
+where job= 'SALESMAN' and sal >= 1500;
+
+select empno, ename, sal
+from emp
+where sal between 2000 and 3000
+order by sal desc;
+
+select empno, ename, sal, hiredate
+from emp
+where hiredate >= '1982/01/01' or sal>=5000;
+
+select ename, sal, deptno
+from emp
+where deptno in(10,20) and sal>=2000;
+
+select ename, job, sal, deptno
+from emp
+where sal between 1300 and 1700;
+
+select empno, ename, job, sal, hiredate
+from emp
+where empno in (7902, 7788, 7566);
+
+select empno, ename, job, sal, hiredate, deptno
+from emp
+where sal>=2800 and job= 'MANAGER';
+
+select empno, ename, job, sal, deptno
+from emp
+where JOB not in ('MANAGER', 'CLERK','ANALYST');
+
+-----------------------------------------------------------------
+select ename || ' : ' || job
+from emp
+where JOB = 'MANAGER' and
+hiredate >= '1981/01/01' and hiredate<='81/12/31';
+
+---------------------------------------------------------------------
+select concat(ename, concat('의 급여 ', concat(sal, '만원'))) info
+ from emp
+ where sal< 1000;
+
+select ename, hiredate 
+from emp
+where substr(hiredate, 1,2) = 81;
+
+select ename, job, lpad(sal, 5, '*')
+from emp
+where sal<= 2000;
+
+select ename, job, replace(lpad(sal, 5, '*'), '*', ' ')
+from emp
+where sal<= 2000;
+
+select empno, ename, lower(job), deptno
+from emp
+where ename = 'SCOTT';
+
+select empno, ename, job, sal, deptno
+from emp
+where substr(ename,1,1) between 'K' and 'Y' order by ename;
+
+select ltrim(job,'A'), ltrim(sal, 1)
+from emp
+where deptno = 10;
+-----------------------------------------------------------
+select to_char(hire_date, 'MM') 월, count(employee_id) 입사자수
+from employees
+group by to_char(hire_date, 'MM')
+order by 월;
+
+
+문제1.
+select nvl(to_char(DEPARTMENT_ID), 'NO Department') 부서번호, round(avg(SALARY),0) 평균급여
+from employees
+where nvl(to_char(DEPARTMENT_ID), 'NO Department')
+group by DEPARTMENT_ID
+having round(avg(salary),0)>6000;
+// 왜 안되나 where절에 nvl 쓰면?  써도 되는데 "관계"가 있어야함
+nvl은 void함수가 아님(자바 메서드 아니다)
+
+select nvl(to_char(DEPARTMENT_ID), 'NO Department') 부서번호, round(avg(SALARY),0) 평균급여
+from employees
+group by DEPARTMENT_ID
+having avg(salary)>6000;
+
+문제2.
+select department_id, avg(salary)
+from employees
+group by department_id
+having avg(salary)>= 10000;
+
+문제3.
+select department_id, avg(salary)
+from employees
+where department_id not in(40,50)
+group by department_id
+order by avg(salary) desc;
+
+문제4.
+select first_name, last_name, salary, COMMISSION_PCT, salary+COMMISSION_PCT TOTAL
+from employees
+where COMMISSION_PCT is not null
+order by salary+COMMISSION_PCT desc;
+
+
+문제0.
+select ename, mgr, nvl2(to_char(mgr), '담당', '상위자') 관리자
+from emp;
+
+---------------------------------------------------------------------------------
+select d.dname, count(e.empno)
+from emp e, dept d
+where e.deptno = d.deptno
+group by d.dname;
+
+1. 
+select e.empno, e.ename, e.sal, d.dname, d.loc_code
+from emp e, dept d
+where e.deptno=d.deptno and e.job= 'SALESMAN';
+
+2.
+select e.ename, d.dname, e.sal, l.city
+from emp e, dept d, locations l
+where e.deptno=d.deptno and d.loc_code =l.loc_code;
+
+3.
+select e.ename, e.sal, e.job, e.hiredate, e.comm
+from emp e, dept d, locations l
+where e.deptno = d.deptno and d.loc_code = l.loc_code
+	and l.city = 'DALLAS' and e.sal>= 1500;
+
+4.
+select *
+from emp e, dept d
+where e.deptno = d.deptno;
+
+select e.empno, e.ename, e.job, e.deptno, d.deptno, d.dname
+from emp e, dept d
+where e.deptno = d.deptno;
+
+5. 
+select d.deptno, d.dname, l.city
+from dept d, locations l
+where d.loc_code = l.loc_code;
+
+---------------------------------------
+1.
+
+select d.department_name, count(e.employee_id)
+from employees e, departments d
+where e.department_id = d.department_id
+group by d.department_name;
+
+2.
+select e.first_name || ' ' || e.last_name || '의 연봉은 ' || e.salary || '입니다.' as 결과
+from employees e, departments d
+where e.department_id = d.department_id
+	and d.department_name = 'IT'
+order by e.salary;
+
+3.
+select e.employee_id, e.first_name, j.job_title, d.department_name
+from employees e, jobs j, departments d, locations l
+where e.department_id = d.department_id
+	and e.job_id = j.job_id and l.location_id = d.location_id
+and l.city = 'Seattle';
+
+----------------------------------------------------
+1.
+ ===>대표문자 쓸 때는 not in이 아니라 not like !!!
+select j.job_title JOB, sum(e.salary) 급여
+from jobs j, employees e
+where e.job_id = j.job_id and j.job_title not like ('%Representative')
+group by j.job_title
+having sum(e.salary) > 30000
+order by sum(e.salary) asc;
+
+
+2.
+select d.department_name 부서명, count(employee_id) 인원수
+from departments d, employees e
+where e.department_id = d.department_id
+and e.hire_date < '2005/01/01'
+group by d.department_name;
+ 
+
+3.
+select e.department_id 부서번호, d.department_name 부서명, 
+count(e.employee_id) 인원수, max(e.salary) 최고급여, min(e.salary) 최저급여, 
+floor(sum(e.salary)/count(e.employee_id)) 평균급여, sum(e.salary) 급여총액
+from employees e, departments d, jobs j
+where e.department_id = d.department_id and e.job_id = j.job_id 
+group by e.department_id, d.department_name
+having count(e.employee_id) >= 3
+order by 인원수 desc;
+
+
+-----------------------------------------------------------
+1. 
+select d.dname, count(e.empno)
+from emp e, dept d
+where d.deptno = e.deptno(+)
+group by dname;
+
+2.
+select nvl(d.dname, '신입사원'), count(e.empno)
+from emp e, dept d
+where d.deptno(+) = e.deptno
+group by d.dname;
+
+----------------------------------------------------------------
+select m.ename, count(e.empno)
+from emp e, emp m
+where e.mgr = m.empno
+group by m.ename;
+
+
+select ename, job, hiredate
+from emp
+where job not in (select job
+                   from emp
+                   where ename = 'SMITH');
+
+select ename, job, hiredate
+from emp
+where job = (select job
+	from emp
+	where deptno = 10);
+
+--------------------------------------------------
+1.
+select ename, empno
+from emp
+where deptno in (select deptno
+		from emp
+		where ename like '%T%');
+
+2.
+select ename, deptno, sal
+from emp
+where sal > (select max(sal)
+		from emp
+		where deptno=20); 
+
+3.
+select ename, hiredate, sal
+from emp
+where sal > (select avg(sal)
+		from emp
+		where hiredate like '82%');
+
+---------------------------------------------------
+ select ename, sal
+ from emp
+ where sal >any(select sal
+                    from emp
+                    where deptno=10);
+
+select ename, sal
+from emp
+where sal >all(select sal
+		from emp
+		where deptno=10);
+
+
+select ename, deptno, sal, hiredate
+from emp
+where sal in (select min(sal)
+		from emp
+		group by deptno);
+
+select ename, deptno, sal, hiredate
+from emp
+where (deptno, sal) in (select deptno, min(sal) 
+			from emp
+			group by deptno);
+
+select ename, deptno, sal
+from emp outer
+where sal > (select avg(sal)
+		from emp e
+		where e.deptno = outer.deptno);
+		
+select e.ename, e.deptno, e.sal, d.avgsal
+from emp e, (select deptno, avg(sal) avgsal --함수로 나온 결과는 alias가 있어야 한다.
+		from emp
+		group by deptno) d
+where e.deptno = d.deptno --조인
+	and e.sal > d.avgsal; 	
+
+
+
+------------------------------------------------------------------
+1. 
+select ename, empno
+from emp
+where deptno in (select deptno
+from emp
+where ename like '%T%');
+
+2.
+select ename, deptno, sal
+from emp
+where sal > all(select sal
+from emp
+where deptno = 20);
+
+select ename, deptno, sal
+from emp
+where sal > all(select max(sal)
+from emp
+where deptno = 20);
+
+3.
+select ename, hiredate, sal
+from emp
+where sal > (select avg(sal)
+from emp
+where hiredate like '82%');
+-----------------------------------------------------
+1.
+select d.department_name, avg(e.salary)
+from employees e, departments d
+where e.department_id = d.department_id
+group by department_name
+having avg(e.salary) <= (select avg(salary)
+from employees
+where department_id = 70);
+
+2. 
+select employee_id, last_name, salary, department_id
+from employees
+where (department_id, salary) in (select department_id, max(salary)
+			from employees
+			group by department_id)
+order by salary desc;
+
+where salary = (select max(salary)~ 서브쿼리~
+ 해버리면 다른 부서에 있는 최대값이 아닌 값이 범위에 있다면 출력 될 수있음
+=>따라서,  다중열 서브쿼리를 쓴다.
+
+3.
+select employee_id, last_name, hire_date, salary
+from employees e
+where e.employee_id = (select manager_id
+		from employees out
+		where out.last_name = 'Fox');
+
+
+--------------------------------------------------
+
+1.
+create table TB_MEM(	
+	MEM_ID varchar2(30) primary key NOT NULL,
+	MEM_NM varchar2(30),
+	MEM_CD varchar2(30),
+	PWD  varchar2(30) NOT NULL,
+	PWD_HINT varchar2(30) NOT NULL,
+	PWD_HINT_ANS varchar2(30) NOT NULL,
+	SSN varchar2(30) NOT NULL, 
+	BIRTH_DT varchar2(30), 
+	MALE_FLG varchar2(10) NOT NULL, 
+	TEL_NO varchar2(30), 
+	CELL_NO varchar2(30), 
+	ADDR varchar2(100) NOT NULL, 
+	EMAIL varchar2(30), 
+	EMAIL_RCV_FLG varchar2(10), 
+	MEM_REG_DTM varchar2(30)
+);
+
+
+alter table TB_MEM
+add constraint mem_ssn_uni unique(ssn);
+
+alter table TB_MEM
+add constraint mem_cd_ck check(MEM_CD in('Silver', 'Gold', 'VIP', 'VVIP', 'Guest'));
+
+
+
+2)
+create table TB_PRODUCT(
+	PRD_NO varchar2(30) primary key NOT NULL, 
+	PRD_NM varchar2(30) NOT NULL,
+	CATEGORY_NO varchar2(30) NOT NULL, 
+	PRD_DES varchar2(100) NOT NULL, 
+	SELL_PRC_UNIT varchar2(30) NOT NULL, 
+	SELL_START_DT varchar2(30) NOT NULL, 
+	SELL_END_DT varchar2(30) NOT NULL, 
+	DLV_CONSTRAINT varchar2(30) NOT NULL, 
+	AS_FLG varchar2(30) NOT NULL, 
+	RETURN_FLG varchar2(30) NOT NULL, 
+	IMG_ORG_FILE_NM varchar2(30) NOT NULL, 
+	IMG_GEN_FILE_NM varchar2(30) NOT NULL, 
+	REG_ID varchar2(30) NOT NULL, 
+	REG_DTM  varchar2(30) NOT NULL
+);
+
+create table TB_ORDER(
+	ORD_NO varchar2(30) primary key,
+	MEM_ID  varchar2(30),
+	RCVR_NM varchar2(30),
+	RCVR_TEL_NO varchar2(30) ,
+	RCVR_ADDR varchar2(100),
+	DLV_CORP_NO varchar2(30),
+	DLV_REQ varchar2(30),
+	ORD_STAT_CD varchar2(30),
+	ORD_DTM varchar2(30)
+);
+
+create table TB_ORDER_PRODUCT(
+	ORD_NO varchar2(30),
+	PRD_NO  varchar2(30),
+	QTY number(10)
+);
+
+
+alter table TB_ORDER
+add constraint order_memId_fk foreign key(mem_id)
+	references TB_MEM(mem_id);
+
+
+alter table TB_ORDER_PRODUCT
+add constraint ordprd_ordNo_fk foreign key(ord_no)
+	references TB_ORDER(ord_no);
+
+alter table TB_ORDER_PRODUCT
+add constraint ordprd_prdNo_fk foreign key(prd_no)
+	references TB_PRODUCT(prd_no);
+
+//배송코드 x, pk테이블에 있는거 쓰기, 나머지는 임의
+insert into TB_ORDER values(myorder_seq.nextval, 'user01', '1234', '1234', '1234', '1234', '1234', '1234', '1234');
+insert into TB_ORDER_PRODUCT values(myorder_seq.currval, 'PRD000000003', 04);
+insert into TB_ORDER values(myorder_seq.nextval, 'user01', '1000', '1000', '1000', '1000', '1000', '1000', '1000');
+insert into TB_ORDER_PRODUCT values(myorder_seq.currval, 'PRD000000011', 56);
+insert into TB_ORDER values(myorder_seq.nextval, 'admin01', '3429', '3429', '3429', '3429', '3429', '3429', '3429');
+insert into TB_ORDER_PRODUCT values(myorder_seq.currval, 'PRD000000015', 70);
+// 하나 더 추가
+insert into TB_ORDER values(myorder_seq.nextval, 'user01', '1234', '1234', '1234', '1234', '1234', '1234', '1234');
+insert into TB_ORDER_PRODUCT values(myorder_seq.currval, 'PRD000000003', 4);
+
+
+
+select owner,  CONSTRAINT_NAME,  CONSTRAINT_TYPE, TABLE_NAME
+ from user_constraints;
+
+
+TB_MEM
+TB_ORDER
+TB_ORDER_PRODUCT
+TB_PRODUCT
+
+-----------------------------
+1.
+// 가격 p.SELL_PRC_UNIT, 수량 order product . qty
+select m.mem_id, sum(p.SELL_PRC_UNIT*opdr.qty)
+from TB_MEM m, TB_PRODUCT p, TB_ORDER_PRODUCT opdr, TB_ORDER ord
+where m.mem_id= ord.mem_id and ord.ord_no = opdr.ord_no and opdr.prd_no = p.prd_no
+group by m.mem_id;
+
+
+select m.mem_nm, sum(p.SELL_PRC_UNIT*opdr.qty)
+from TB_MEM m, TB_PRODUCT p, TB_ORDER_PRODUCT opdr, TB_ORDER ord
+where m.mem_id= ord.mem_id and ord.ord_no = opdr.ord_no and opdr.prd_no = p.prd_no
+group by m.mem_nm;
+
+
+
+2.
+select p.prd_nm, sum(p.SELL_PRC_UNIT*opdr.qty)
+from TB_PRODUCT p, TB_ORDER_PRODUCT opdr
+where opdr.prd_no = p.prd_no
+group by p.prd_nm;
+
+
+-------------------------------------------------------------------------
+1.
+1)
+create table customer(
+	id varchar2(20) primary key,
+	pass number,
+	name varchar2(20) not null,
+	regdate DATE,
+	point number,
+	addr varchar2(30)
+);
+	
+---------------------------------------
+ 
+update tb_board
+set hit = (select hit
+	from tb_board
+	where boardnum = 42) +1
+where boardnum = 42;
+
+
+
+
+
+
+
+
+
