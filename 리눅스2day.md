@@ -1,0 +1,130 @@
+## <<<빅데이터 플랫폼 구축>>>
+
+<hr/>
+
+#### 1. vmware 설치
+
+#### 2. 머신생성 - centos7
+
+#### 3. 머신복제
+
+-ip확인
+
+- ifconfig : ipconfig와 같다.
+
+#### 4. 머신 4대를 클러스터링
+
+-방화벽 해제
+
+- systemctl list-units --type=service
+
+  : 현재 서비스들  목록 확인
+
+  - 엔터로 다음 페이지 넘어감/ ctrl+c로 중단
+  - firewalld.service : 방화벽 설정됨(디폴트)  
+
+- systemctl : centOS 7부터 서비스관리 명령어(시스템 상태)
+
+  ex) systemctl status firewalld(running)
+
+  ​	systemctl stop firewalld (중지)
+
+  ​	systemctl status firewalld (stop)
+
+  ​	reboot (OS 재시작)	--> 껐다 키면 방화벽이 아직 살아있다!
+
+  ​	systemctl disable firewalld
+
+  
+
+-hostname 변경
+
+- hostnamectl set-hostname <바꿀이름>
+
+  : hostname을 <바꿀이름>으로 바꿈	
+
+  --> 머신 4대를 구별할 수 있게 localhost에서 번호붙인 이름으로 바꿔준다.
+
+  - hostname 명령어로 확인
+
+
+
+-DNS 설정
+
+​	*hosts파일 등록 
+
+​		: etc/hosts파일 확인
+
+
+
+​	*네트워크 프로세스를 restart
+
+- etc>hosts 가서 싹 지우고 다시 설정
+
+  /etc/init.d/network restart
+
+  ssh hadoop02	--> ip가 아니라 도메인으로 접속할 수 있다.
+
+  exit
+
+
+
+   *설정확인 - 설정을 성공 완료했는지 확인
+
+ - ssh hadoop02
+
+   ssh hadoop04 --> 01 말고 다른 머신에서도 또다른 머신을 도메인으로 부를 수 있다.
+
+   exit
+
+   exit
+
+
+
+​	*4대에 모두 적용되도록
+
+​	hadoop01머신에서 hadoop02, hadoop03, hadoop04에 직접 접속
+
+​	[원격 서버로 copy]
+
+- scp copy할파일(위치까지 명시) copy받을서버의위치(계정+프롬프트+호스트네임+대상파일까지 명시)
+
+  scp	/etc/hosts	root@hadoop02:/etc/hosts
+
+  ===	========	======================
+
+  명령어	copy할파일		target서버의 위치와 파일명
+
+  ​	--> 리눅스는 파일명까지 명시(/hosts) 안하면 파일이 폴더처럼 생성된다.
+
+​	[원격 서버에 실행명령]
+
+- ssh 서버 "실행할 명령문"
+
+  ​		=== 
+
+  ​		ip, 도메인
+
+  ssh hadoop04 "/etc/init.d/network restart"
+
+  ​	--> 서로 도메인으로 접속 가능 ex) ssh hadoop02
+
+
+
+-암호화된 통신을 위해서 공개키생성 후 배포
+
+- ssh-keygen -t rsa 하고 엔터 누르기
+
+  SHA256: 암호화 방식
+
+  cd .ssh	(hadoop home디렉터리의 숨겨진 폴더 보기)
+  [hadoop@hadoop01 .ssh]$ ls
+  id_rsa  id_rsa.pub
+
+  ​			=========
+
+  ​				공개키
+
+  ssh-copy-id -i id_rsa.pub hadoop@hadoop02
+
+  ssh hadoop02	--> 이제 접속할 때 패스워드를 물어보지 않는다.
