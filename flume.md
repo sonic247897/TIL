@@ -43,6 +43,12 @@ flume의 실행 중인 프로세스를 agent라 부르며 source, channel, sink�
     - spoolDir: 특정 폴더에 저장된 파일
 
       ​			(같이 쓸 수 있는 속성- spoolDir: 폴더명)
+      
+   - exec: 파일 시스템을 거치지 않고 바로 넘겨준다. 
+
+     ​			(같이 쓸 수 있는 속성- shell: /bin/bash -c로 배쉬셸 쓸 수 있다, command: 셸 명령어 넘겨준다. for문은 cat, tail정도에만 사용)
+
+     ->default: 기본 10줄 씩, 파일별로 넘기는 것이 아니라 파일을 여러개 읽어서 10줄 단위로 잘라서 넘긴다.
 
 2. channel
 
@@ -63,6 +69,12 @@ flume의 실행 중인 프로세스를 agent라 부르며 source, channel, sink�
      ​			(같이 쓸 수 있는 속성- sink.directory: 읽어온 파일을 저장할 output폴더를 명시)
 
      ->default: 정해진 시간마다 계속 롤링(파일을 다 읽지 않고 만드는 경우도 있음)
+     
+   - hdfs: hdfs로 출력이 전달 
+
+     ​			(같이 쓸 수 있는 속성- fileType: DataStream은 우리가 쓴 그대로 읽음, writeFormat: text로 지정해야 네트워크로 전송 가능, filePrefix: 파일 앞에 붙일 이름, fileSuffix: 파일 뒤에 붙일 이름, useLocalTimeStamp: true로 설정하면 시간 관련 alias 사용 가능)
+
+     ->default: 30초 마다 10줄 씩 롤링(로컬에 저장)
 
 #### [flume의 실행]
 
