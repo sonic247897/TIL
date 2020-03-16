@@ -377,3 +377,4 @@ db.board.update({no:2}, {$push:{"comment":{content:"고기고기",count1:20,coun
 db.board.update({no:3}, {$push:{"comment":{content:"zzㅋㅋㅋㅋ",count1:100,count2:233,writedate:"02.22"}}})
 ```
 
+*comment배열을 처음 생성할 때는 대괄호[]를 넣어도 되고 안 넣어도 되지만(안 넣고 다음 object를 push하면 알아서 배열로 만든다), 그 이후에 push할 때는 대괄호[]를 넣으면 배열 안의 배열이 된다.
