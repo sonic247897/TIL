@@ -377,4 +377,12 @@ db.board.update({no:2}, {$push:{"comment":{content:"고기고기",count1:20,coun
 db.board.update({no:3}, {$push:{"comment":{content:"zzㅋㅋㅋㅋ",count1:100,count2:233,writedate:"02.22"}}})
 ```
 
-*comment배열을 처음 생성할 때는 대괄호[]를 넣어도 되고 안 넣어도 되지만(안 넣고 다음 object를 push하면 알아서 배열로 만든다), 그 이후에 push할 때는 대괄호[]를 넣으면 배열 안의 배열이 된다.
+*comment배열을 처음 생성할 때는 대괄호[]를 넣어도 되고 안 넣어도 되지만([]안 넣고 다음 object를 push하면 알아서 배열로 만든다), 그 이후에 push할 때는 대괄호[]를 넣으면 배열 안의 배열이 된다.
+
+​	=> 기본적으로 배열이 원래 존재한다고 생각하고 push해서 원소를 넣으면 된다.
+
+*writedate: new Date()  -> ISODate 타입으로 날짜와 시간이 들어간다.(오라클의 sysdate같은 형태)
+
+ db.board.find().pretty() -> JSON형식을 하나하나 펼쳐서 본다.
+
+ 
