@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1584668610341.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2970233476",
+    "id" : "461FDA66",
+    "lastKnownWriteTime" : 1584685231,
+    "last_content_update" : 1584685231758,
+    "path" : "C:/iot/work/Rwork/advanced/ggplot_test.R",
+    "project_path" : "ggplot_test.R",
+    "properties" : {
+        "cursorPosition" : "7,50",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

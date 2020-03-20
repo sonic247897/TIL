@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1584691855380.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3917124947",
+    "id" : "1AD6962C",
+    "lastKnownWriteTime" : 1584693109,
+    "last_content_update" : 1584693109201,
+    "path" : "C:/iot/work/Rwork/advanced/midwest_exam.R",
+    "project_path" : "midwest_exam.R",
+    "properties" : {
+        "cursorPosition" : "13,44",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 8,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1584670023993.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "666441446",
+    "id" : "640C548C",
+    "lastKnownWriteTime" : 1584681892,
+    "last_content_update" : 1584681892939,
+    "path" : "C:/iot/work/Rwork/advanced/importdata.R",
+    "project_path" : "importdata.R",
+    "properties" : {
+        "cursorPosition" : "80,5",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

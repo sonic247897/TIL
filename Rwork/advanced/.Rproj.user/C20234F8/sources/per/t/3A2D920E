@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1584664760638.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "246107154",
+    "id" : "3A2D920E",
+    "lastKnownWriteTime" : 1584665696,
+    "last_content_update" : 1584665696851,
+    "path" : "C:/iot/work/Rwork/advanced/installPackage.R",
+    "project_path" : "installPackage.R",
+    "properties" : {
+        "cursorPosition" : "8,1",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
