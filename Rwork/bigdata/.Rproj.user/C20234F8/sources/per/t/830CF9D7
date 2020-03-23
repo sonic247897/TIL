@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1584942789898.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1588211190",
+    "id" : "830CF9D7",
+    "lastKnownWriteTime" : 1584947790,
+    "last_content_update" : 1584947790569,
+    "path" : "C:/iot/work/Rwork/bigdata/yes24.R",
+    "project_path" : "yes24.R",
+    "properties" : {
+        "cursorPosition" : "16,0",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 7,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

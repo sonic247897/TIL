@@ -1,9 +1,10 @@
-install.packages("mongolite")
-library("mongolite")
+install.packages("mongolite") #패키지 설치할 때는 큰따옴표 필요
+library(mongolite) #라이브러리 올릴 때는 큰따옴표 없어도 인식
 library("stringr")
 
 url <- "https://www.clien.net/service/group/community?&od=T31&po=0"
-url_data <- readLines(url, encoding = "UTF-8") # url접속도 대신해줌(사이트에서 정보 받아옴)
+# readLines =inputStream과 비슷. 원격 서버 데이터, 파일 데이터도 읽을 수 있다. 
+url_data <- readLines(url, encoding = "UTF-8") # url접속도 대신해줌(사이트에서 정보 받아옴) 
 # 인코딩 확인!!
 url_data
 # 정보확인=============================
@@ -34,7 +35,8 @@ title
 # 태그로 뽑기
 hit_data <- url_data[str_detect(url_data, "<span class=\"hit\">")]
 hit_data
-hit <- str_extract(hit_data, "(?<=\">).*(?=</span>)")
+# 공지사항 제외
+hit <- str_extract(hit_data, "(?<=\">).*(?=</span>)")[-1]
 hit
 
 #### 데이터 필터링: url ####
@@ -51,7 +53,7 @@ url_val
 # =>링크를 타고 타고 들어가서 크롤링 하는 상황에서 사용
 
 #### csv파일로 생성 ####
-final_data <- cbind(title, hit, url_val)
+final_data <- cbind(title, hit, url_val) # column bind
 final_data
 write.csv(final_data, "crawl_data.csv")
 length(title)

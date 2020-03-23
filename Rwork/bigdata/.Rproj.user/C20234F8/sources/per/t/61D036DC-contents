@@ -1,9 +1,17 @@
-install.packages("mongolite")
-library("mongolite")
+install.packages("mongolite") #패키지 설치할 때는 큰따옴표 필요
+library(mongolite) #라이브러리 올릴 때는 큰따옴표 없어도 인식
 library("stringr")
 
+#mongodb에 저장하기 위해서는 크롤링해야 한다.
+# mongodb 커넥션
+con <- mongo(collection = "crawl",
+             db = "bigdata",
+             url = "mongodb://127.0.0.1")
+
+
 url <- "https://www.clien.net/service/group/community?&od=T31&po=0"
-url_data <- readLines(url, encoding = "UTF-8") # url접속도 대신해줌(사이트에서 정보 받아옴)
+# readLines =inputStream과 비슷. 원격 서버 데이터, 파일 데이터도 읽을 수 있다. 
+url_data <- readLines(url, encoding = "UTF-8") # url접속도 대신해줌(사이트에서 정보 받아옴) 
 # 인코딩 확인!!
 url_data
 # 정보확인=============================
@@ -34,7 +42,8 @@ title
 # 태그로 뽑기
 hit_data <- url_data[str_detect(url_data, "<span class=\"hit\">")]
 hit_data
-hit <- str_extract(hit_data, "(?<=\">).*(?=</span>)")
+# 공지사항 제외
+hit <- str_extract(hit_data, "(?<=\">).*(?=</span>)")[-1]
 hit
 
 #### 데이터 필터링: url ####
@@ -51,11 +60,27 @@ url_val
 # =>링크를 타고 타고 들어가서 크롤링 하는 상황에서 사용
 
 #### csv파일로 생성 ####
-final_data <- cbind(title, hit, url_val)
+final_data <- cbind(title, hit, url_val) # column bind
 final_data
 write.csv(final_data, "crawl_data.csv")
+save(final_data, file = "crawl_data.RData") #R에서 사용하고 로딩하기 때문에 csv파일보다 로딩이 빠르다 => 몇만건 이상일 때는 R에서 작업할 때 빠르게 하기 위해 RData로 저장
 length(title)
 length(hit)
 length(url_val)
+
+#### mongodb에 저장하기 ####
+# 기존에 저장되어 있는 것을 지우고 싶을 때
+# con변수에는 자바에서 썼던것처럼 mongodb 함수를 지원해준다.
+if(con$count()>0){
+  con$drop()
+}
+final_data
+class(final_data) #matrix
+## mongodb에 데이터를 저장하기 위해서 dataframe으로 변환
+final_data <- data.frame(final_data)
+con$insert(final_data) #insert기본 타입은 data frame이어야 한다
+
+
+
 
 

@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1584943670657.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2901395704",
+    "id" : "CF679D2",
+    "lastKnownWriteTime" : 1584948933,
+    "last_content_update" : 1584948933706,
+    "path" : "C:/iot/work/Rwork/bigdata/konlp.R",
+    "project_path" : "konlp.R",
+    "properties" : {
+        "cursorPosition" : "48,34",
+        "scrollLine" : "40",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 8,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

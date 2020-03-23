@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1584940874878.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2829063799",
+    "id" : "2DE202EE",
+    "lastKnownWriteTime" : 1584941610,
+    "last_content_update" : 1584941610268,
+    "path" : "C:/iot/work/Rwork/bigdata/N2H4.R",
+    "project_path" : "N2H4.R",
+    "properties" : {
+        "cursorPosition" : "2,13",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
