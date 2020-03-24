@@ -1,4 +1,4 @@
-# 더이상 R에서 지원x
+# 더이상 R에서 지원x. 제일 유명한 라이브러리
 # 블로그에서 KoNLP zip파일 받아서 R3.6.3의 library에 압축풀기
 install.packages("KoNLP")
 # install.packages로 KoNLP를 설치하지 못해서 의존모듈을 직접 설치해줘야 한다
@@ -18,6 +18,8 @@ library(stringr)
 extractNoun("롯데마트가 판매하고 있는 흑마늘 양념 치킨이 논란이 되고 있다.")
 
 SimplePos09("롯데마트가 판매하고 있는 흑마늘 양념 치킨이 논란이 되고 있다.")
+
+convertHangulStringToJamos("R는 많은 공헌자에의한 공동 프로젝트입니다")
 
 #### 분석할 샘플데이터 로딩 ####
 load("comments.RData")
@@ -58,6 +60,35 @@ wordlist <- sapply(str_split(data_list, "/"), function(x){
                                               x[1]
                                           })
 class(wordlist) #character
-head(wordlist,10)
+head(data_list, 20)
+head(wordlist, 20) #제대로 분석되지 않음 - list인 채로 분석하면 list로 나온다
+
+# sapply 함수 내부에서 요구되어지는 사항: list는 분석할 수 없다
+class(unlist(data_list)) # character 벡터
+wordlist <- sapply(str_split(unlist(data_list), "/"), function(x){
+  x[1]
+})
+head(data_list, 20)
+head(wordlist, 20)
+
+# table함수를 이용해서 단어의 빈도수를 구하기
+# table함수는 벡터에 저장되어 있는 모든 단어들의 빈도수를 계산해서 변환
+# - 단어를 이용해서 변수명으로 사용
+tablewordlist <- table(wordlist)
+tablewordlist[1]
+tablewordlist[89]
+names(tablewordlist)
+
+# 분석한 데이터를 이용해서 sort
+sort(tablewordlist, decreasing = T)[1:100]
+# 분석 결과를 가지고 기준을 적용해서 정리 - 한 글자수 빼기
+nchar("글자수") #글자수 반환
+tablewordlist_result <- tablewordlist[
+                                nchar(names(tablewordlist)) >1 ]
+tablewordlist_result <- sort(tablewordlist_result, decreasing = T)[1:100]
+tablewordlist_result
+
+# 감정분석 1. 머신러닝 2. 감정어 사전 
+# 지수 계산해서 수치가 높은 쪽을 판단
 
 
