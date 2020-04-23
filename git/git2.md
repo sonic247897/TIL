@@ -314,3 +314,11 @@ $ git remote add origin URL
 $ git push origin master
 ```
 
+### 계정 확인
+
+``` bash
+$ git config --global -l
+user.name=sonic247897
+user.email=sonic247897@gmail.com
+
+```
