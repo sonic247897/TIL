@@ -18,6 +18,6 @@ function deleteDivAndP(){
 
 - 크롬의 F12 Console창
 
-![console](C:\Users\student\Desktop\TIL\images\console.PNG)
+![console](images/console.PNG)
 
 `===`은 type까지 체크한다. (권장됨)
