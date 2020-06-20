@@ -13,9 +13,8 @@
 
 ### 알고리즘
 
-- 백준
-- 프로그래머스
-- SWEA
+- 이론 정리
+  - 문제풀이는 [Problem-Solving](https://github.com/sonic247897/Problem-Solving)에 있음
 
 ### 기타
 
