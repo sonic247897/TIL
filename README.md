@@ -10,11 +10,11 @@
 
 - 문법
 
-### [웹](./웹, oracle)
+### [웹](./웹%2C%20oracle)
 
 - TOMCAT
 
-### [SQL](./웹, oracle)
+### [SQL](./웹%2C%20oracle)
 
 - Oracle sql문
 
@@ -24,7 +24,7 @@
 - 그래프 그리기
 - 크롤링
 
-### [Hadoop](./mongoDB, flume, hadoop)
+### [Hadoop](./mongoDB%2C%20flume%2C%20hadoop)
 
 - Hadoop 설치와 환경설정
 - mongoDB
@@ -63,7 +63,7 @@
 - 운영체제
 - 네트워크
 
-### [사이트 목록](./사이트 목록)
+### [사이트 목록](./사이트%20목록)
 
 - 추천 링크
 - Tool
