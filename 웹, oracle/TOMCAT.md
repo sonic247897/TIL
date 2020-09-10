@@ -1,5 +1,7 @@
 ## TOMCAT
 
+> WAS(Web Application Server) = Web Server(정적 데이터 처리) + Web Container(동적 데이터 처리 ex.DB..)
+
 - 웹 요청 방식
 
   http://127.0.0.1:8088/context명/폴더명.../요청할 web application
