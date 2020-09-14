@@ -6,7 +6,7 @@
 
 xml 파일을 변경하면 서버를 재부팅 해야 한다. (web.xml 설정파일은 내 파일에만 적용되는 설정임)
 
-![](images\folder_structure.jpg)
+![](images/folder_structure.jpg)
 
 
 
@@ -14,11 +14,11 @@ xml 파일을 변경하면 서버를 재부팅 해야 한다. (web.xml 설정파
 
 스프링은 **DAO(Data Access Object) 패턴**을 지원한다.
 
-![](images\STS_process.jpg)
+![](images/STS_process.jpg)
 
 
 
 ## 3. STS 프로젝트 구조
 
-![](images\STS_project_structure.jpg)
+![](images/STS_project_structure.jpg)
 

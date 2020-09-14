@@ -14,7 +14,7 @@ JDBC의 동작원리는 `OOP`를 따른다.
 
 ​	=> 따라서 new()를 사용하여 객체를 생성하지 않고, 메소드의 리턴값을 받아오는 방식으로 접근한다.
 
-![JDBC_driver](images\JDBC_driver.PNG)
+![JDBC_driver](images/JDBC_driver.PNG)
 
 Java의 인터페이스(`Connection`)를 상속 받았기 때문에 특정 함수를 호출하면, **각 DBMS의 오버라이딩 메소드가 호출된다**. (함수 이름을 같게 설계했기 때문에 DBMS를 다른 제품으로 바꾸었을 때 코드를 일부만 수정해도 된다)
 
