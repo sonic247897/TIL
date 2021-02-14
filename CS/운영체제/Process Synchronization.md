@@ -1,8 +1,9 @@
 # Process Synchronization
 
+`병행 제어(Concurrency Control)`라고 부르기도 한다.
+
 - `공유 데이터의 동시 접근(concurrent access)`은 **데이터의 불일치(inconsistency) 문제**를 발생시킬 수 있다.
 - 일관성 유지를 위해서는 **협력 프로세스(cooperating process) 간의 `실행 순서(orderly execution)`를 정해주는 메커니즘**이 필요하다.
-
 - Race condition
   - 여러 프로세스들이 동시에 `공유 데이터`를 접근하는 상황
   - 데이터의 최종 연산 결과는 **마지막에 그 데이터를 다룬 프로세스에 따라 달라짐**
@@ -126,9 +127,9 @@ E-Box가 S-Box의 데이터를 읽어서 연산을 하는 도중에 또다른 E-
 
      - 할당 시간이 정확하게 지켜지지 않을 수 있지만 time sharing system은 real time system이 아니므로 시스템에 큰 문제가 발생하지 않는다.
 
-3. 멀티프로세서 환경
+3. 멀티프로세서 시스템
 
-   - 앞의 두 예시와 달리, `공유 데이터`를 사용하는 작업이 진행되는 동안 interrupt enable/disable하는 방식으로 해결되지 않는다.
+   - 앞의 두 예시와 달리, `공유 데이터`를 사용하는 작업이 진행되는 동안 **interrupt enable/disable**하는 방식으로 해결되지 않는다.
 
      앞의 예시들은 **CPU가 하나**인데 작업 도중에 그 CPU의 제어권이 넘어가서 생긴 문제이다.
 
@@ -139,6 +140,7 @@ E-Box가 S-Box의 데이터를 읽어서 연산을 하는 도중에 또다른 E-
    - 해결법:
 
      1. 한 순간에 하나의 CPU만이 커널에 들어갈 수 있게 하는 방법
+
         - 비효율적
 
      2. 커널 내부에 있는 각 공유 데이터에 접근할 때마다 그 데이터에 대한 lock/unlock을 하는 방법
@@ -151,7 +153,21 @@ E-Box가 S-Box의 데이터를 읽어서 연산을 하는 도중에 또다른 E-
 
 ## 2. 임계 구역(The Critical-Section Problem)
 
-n개의 프로세스가 `공유 데이터`를 동시에 사용하기를 원하는 경우, 각 프로세스의 **코드 영역**에는 **공유 데이터를 접근하는 `코드`인 critical section**이 존재한다.
+**enable/disable interrupt 방식이 아닌 각 `공유 데이터`별로 lock을 거는 방식을 사용한다.**
+
+아래의 예제들이 커널코드라고 가정하면 작업이 완료될 때까지 interrupt가 걸리지 않으므로 lock을 걸 필요가 없다.
+
+그런데 lock 알고리즘과 세마포어의 예제 코드는 도중에 interrupt가 걸려 다른 프로세스에게 제어권이 넘어가는 상황을 상정한다.  
+
+=> 즉 프로그래머가 **공유 메모리를 사용하는 프로그램**을 작성할 때 고려해야 할 여러가지 사항들을 설명하고 있다.
+
+*`멀티프로세서` 시스템에서는 **커널**을 작성할 때도 공유 데이터에 대한 lock을 거는 방식을 사용한다. 
+
+> 여기서부터는 운영체제(커널)의 원리가 아니라, `시분할 시스템 운영체제` 위에서 프로그래밍 하는 방법을 설명하고 있다. **(싱글 프로세서 환경)**
+>
+> - **세마포어**와 **모니터**는 `process synchronization 문제`를 프로그래머 입장에서 쉽게 해결할 수 있도록 시스템이 제공해주는 것이다.
+
+<u>n개의 프로세스</u>(공유 메모리 사용 프로세스)가 `공유 데이터`를 동시에 사용하기를 원하는 경우, 각 프로세스의 **코드 영역**에는 **공유 데이터를 접근하는 `코드`인 critical section**이 존재한다.
 
 > 하나의 프로세스가 critical section에 있을 때, 다른 모든 프로세스는 critical section에 들어갈 수 없어야 한다.
 
@@ -163,24 +179,27 @@ n개의 프로세스가 `공유 데이터`를 동시에 사용하기를 원하�
 
 임계 구역 관점에서 코드는 두 종류로 구분할 수 있다.
 
+``` c
+do{
+    entry section
+    critical section
+    exit section
+   	remainder section
+}
+```
+
 1. 임계 구역, 즉 공유 데이터를 접근하는 코드(critical section)
 
    : entry section과 exit section 코드로 감싸고, 이 코드들을 이용하여 **lock**을 걸거나 풀어준다.
 
 2. 공유 데이터를 접근하지 않는 코드(remainder section)
 
-   ``` c
-   do{
-       entry section
-       critical section
-       exit section
-      	remainder section
-   }
-   ```
 
 > 프로세스들은 수행의 `동기화(synchronize)`를 위해 몇몇 **변수를 공유**할 수 있다.
 >
 > **=> synchronization variable**
+>
+> - turn, flag[i], 세마포어 변수 
 
 ### 프로그램적 해결법의 충족 조건
 
@@ -211,6 +230,10 @@ SW적으로 **lock**을 걸어서 해결하는 알고리즘들이 있다.
   - 프로세스들 간의 상대적인 수행 속도는 가정하지 않는다.
 
 ### SW적인 lock 알고리즘
+
+프로그래머가 커널을 작성할 때나, 공유메모리를 사용하는 프로그램을 작성할 때 `synchronization 문제`를 고려하여 작성해야 한다.
+
+이때 다음과 같은 알고리즘들이 고려된다. 
 
 #### 1) 순서 정하기
 
@@ -251,7 +274,7 @@ CPU를 빼앗기지 않고 **<u>고급 언어</u>의 critical section**을 모�
 
   - 과잉양보
 
-    : 반드시 한번씩 교대로 들어가야만 하도록 코딩되어 있다. (swap-turn)
+    : 반드시 한번씩 교대로 들어가야만 하도록 코딩되어 있다. **(swap-turn)**
 
     즉, 상대방 프로세스가 critical section을 진입하고 나온 뒤에, turn을 내 차례에 해당하는 값으로 바꿔줘야만 들어갈 수 있다.
 
@@ -281,7 +304,7 @@ CPU를 빼앗기지 않고 **<u>고급 언어</u>의 critical section**을 모�
   ``` c
   do{
       flag[i] = true;	// Pi가 임계구역에 들어가려면 먼저 flag를 true로 만들어서 의사 표시를 한다.
-      while(flag[j]);	// 상대방이 flag를 체크했으면, 상대방이 flag를 체크한 후 임계구역에 들어갔을 수도 있으므로 기다린다.
+      while(flag[j]);	// 상대방이 flag를 체크했으면, 상대방이 flag를 체크한 후 임계구역에 '들어갔을 수도' 있으므로 기다린다.
       critical section
       flag[i] = false; // 상대방이 들어올 수 있게 flag 해제
       remainder section
@@ -290,15 +313,15 @@ CPU를 빼앗기지 않고 **<u>고급 언어</u>의 critical section**을 모�
 
 - `mutual exclusion`은 만족하지만, `progress`는 만족하지 않는다.
 
-  - 둘 다 깃발을 올리고(flag[i] = true;) 끊임 없이 양보하는 상황 발생 가능
+  - 둘 다 깃발을 올리고 끊임 없이 양보하는 상황 발생 가능
 
-    : 프로세스i가 flag[i] = true; 까지 실행하고 CPU를 빼앗긴 뒤, 프로세스j에서 flag[j] = true;를 실행한다.
-
-    이때 둘 다 깃발을 올렸지만 아무도 critical section에 들어가지 못한다.
+    : 프로세스i가 flag[i] = true; 까지 실행하고 CPU를 빼앗긴 뒤, 프로세스j에서 flag[j] = true;를 실행하고 while(flag[i]);에서 기다린다.
 
     다시 프로세스i에게 제어권이 넘어가도 계속 while(flag[j]); 문을 실행하게 된다.
 
-  - 들어가기 전에 깃발을 올리고, 나온 후에 깃발을 내리기 때문에 발생하는 문제
+    이때 둘 다 깃발을 올렸지만 아무도 critical section에 들어가지 못한다.
+
+  - 들어가기 **전**에 깃발을 올리고, 나온 **후**에 깃발을 내리기 때문에 발생하는 문제
 
   => 따라서 `critical section 문제`를 해결하지 못한다.
 
@@ -311,7 +334,7 @@ CPU를 빼앗기지 않고 **<u>고급 언어</u>의 critical section**을 모�
   ``` c
   do{
       flag[i] = true;	// 깃발을 들어 의사 표현하고,
-      turn = j;		// 상대방의 순서로 바꾼다.
+      turn = j;		// 상대방의 순서로 바꾼다.(밑의 while문에서 상대방이 먼저 깃발을 들었으면 양보하기 위해)
       while(flag[j] && turn == j); // 상대방이 깃발을 들고 있고, 상대방의 순서면 기다린다.
       critical section
       flag[i] = false;
@@ -335,7 +358,7 @@ CPU를 빼앗기지 않고 **<u>고급 언어</u>의 critical section**을 모�
 
   : 계속 CPU와 메모리를 쓰면서 wait
 
-  lock이 걸려있는 상태라면 임계구역에 진입하려는 프로세스는 CPU 할당시간 동안 while문만 체크하면서(spin) 할당시간을 소진하고 끝낸다.
+  lock이 걸려있는 상태라면, 임계구역에 진입하려는 프로세스는 CPU 할당시간 동안 while문만 체크하면서(spin) 할당시간을 소진하고 끝낸다.
 
   ⇒ 따라서 비효율적인 알고리즘이다.
 
@@ -343,7 +366,7 @@ CPU를 빼앗기지 않고 **<u>고급 언어</u>의 critical section**을 모�
 
 > 고급 언어가 아니라 **인스트럭션 단위**로 CPU의 제어권을 빼앗을 수 있기 때문에 SW적으로 복잡한 코드가 만들어지게 되었다.
 >
-> => 따라서 **`특수한 인스트럭션`을 HW적으로 구현**하면 critical section 문제는 매우 쉽게 해결된다.
+> => 따라서 **`특수한 인스트럭션`을 HW적으로 구현**하면 `critical section 문제`는 매우 쉽게 해결된다.
 
 ### Synchronization Hardware
 
@@ -617,7 +640,7 @@ Semaphore의 구체적인 구현은 다음과 같다.
 
 - 위의 deadlock도 일종의 starvation으로 볼 수 있다.
 - 하지만 여기서 말하는 starvation은 특정 프로세스들끼리만 자원을 공유하면서 다른 프로세스는 영원히 자기 차례가 오지 않는 현상을 말한다.
-- 식사하는 철학자 문제(deadlock, starvation)
+- ex) 식사하는 철학자 문제(deadlock, starvation)
 
 
 
@@ -775,8 +798,16 @@ circular 형태의 유한한 크기의 버퍼가 존재한다.
     - 현재 DB에 접근 중인 Reader의 수
 - Synchronization variables
   - mutex
+    
     - 공유 변수 readcount를 접근하는 코드(critical section)의 mutual exclusion(mutex, lock) 보장을 위해 사용
+    
+    > mutex도 공유 변수의 일종이지만, 세마포어 자료형 변수이기 때문에 `atomic 연산`인 P와 V 연산으로만 읽기, 비교, 쓰기가 가능하므로 race condition이 발생하지 않는다.
+    >
+    > - turn과 flag[i]는 `atomic 연산`이 지원되지 않아 `임계구역(critical section) 문제`를 해결하는 코드가 매우 복잡했다.
+    >
+    >   (Peterson's Algorithm)
   - db
+    
     - Reader와 writer가 공유 DB 자체를 올바르게 접근하게 하는 역할
 
 **[코드]**
@@ -811,12 +842,12 @@ circular 형태의 유한한 크기의 버퍼가 존재한다.
 
     - P(mutex) ~ V(mutex): binary semaphore
 
-      - `readcount` 변수도 **공유 데이터**이기 때문에 다수의 reader process가 동시에 접근하면 `synchronization 문제`가 발생할 수 있다.
+      - `readcount 변수`도 **공유 데이터**이기 때문에 다수의 reader process가 동시에 접근하면 `synchronization 문제`가 발생할 수 있다.
       - 그래서 **readcount를 바꾸기 위해서**도 lock이 필요하다.
         - readcount++;
         - readcount--;
 
-      > mutex도 공유 변수지만, 읽기만 할 뿐 수정하지 않으므로 `synchronization 문제`가 발생하지 않아 lock이 필요 없다.
+      > mutex는 `공유 데이터`가 아니라 **세마포어 변수**이다.
 
     - if (readcount == 1) P(db);
 
@@ -844,14 +875,389 @@ circular 형태의 유한한 크기의 버퍼가 존재한다.
 철학자가 하는 일이 두 가지 있는데, 각각 5명의 철학자의 주기가 다르다.
 
 1. 생각하는 일
+
 2. 배고파지면 밥 먹는 일
+
+   : 밥을 먹으려면 왼쪽과 오른쪽의 젓가락을 집어야 한다.
+
+   - 젓가락은 `공유 자원`이다. 각 젓가락은 동시에 두 명이서 잡을 수 없으므로, 자원의 개수가 각각 1로 초기화 된다.
+
+**[코드]**
 
 <img src="images/process_synchronization_08.JPG" style="zoom:80%;" />
 
+- 이 solution의 문제점
+
+  - **Deadlock** 가능성이 있다.
+
+  - 모든 철학자가 동시에 배가 고파서 왼쪽 젓가락을 집어버린 경우, 본인이 밥을 다 먹기 전까지는 왼쪽 젓가락을 놓지 않는다. 
+
+    따라서 오른쪽 젓가락은 영원히 잡을 수 없는 상황이 된다.
+
+- 해결 방안
+
+  1. 철학자가 밥을 먹을 때만 테이블에 앉게 한다.
+
+     - 4명의 철학자만이 테이블에 동시에 앉을 수 있도록 한다.
+
+  2. 젓가락을 두 개 모두 집을 수 있을 때에만 젓가락을 집을 수 있게 한다.
+
+  3. 비대칭
+
+     - 짝수 철학자는 왼쪽 젓가락부터 집도록 함
+
+     - 홀수 철학자는 오른쪽 젓가락부터 집도록 함
+
+       => 짝수 철학자와 홀수 철학자 사이의 **하나의 같은 젓가락에 우선순위**를 준다.
+
+       즉, 하나의 젓가락이 우선순위가 더 높아서 그 젓가락을 집은 후에 나머지 젓가락을 집어야 하는 **순서**가 정해진다.
+
+       > `Deadlock 문제`의 해결법인 **자원을 획득하는 순서를 똑같이 맞춰주는 방법**을 이용한 것이다.
+
+**[2번째 해결법에 대한 코드]**
+
+젓가락을 두 개 모두 집을 수 있을 때에만 젓가락을 집을 수 있게 한다.
+
+> 이 코드는 **세마포어**의 원리(철학)에 맞게 잘 짜여진 코드는 아니다.
+>
+> - 세마포어 변수는 원래 **자원의 개수**를 나타내고, 값을 1 이상으로 초기화 한다.
+> - semaphore self[5] = 0;
+>   - 이 코드에서는 어떤 조건을 만족하면 self[i] = 1이 되도록, 즉 권한을 주도록 코딩했다.
+>
+> 세마포어를 사용할 때 불편한 점이 있기 때문에 **모니터**를 이용한 코드를 나중에 살펴본다.
+
+<img src="images/process_synchronization_09.JPG" style="zoom:80%;" />
+
+- 먹기 전에는 pickup(i)과 putdown(i) 함수를 호출한다.
+
+- Shared data
+
+  ``` c
+  enum {thinking, hungry, eating} state[5]; // 각 철학자 프로세스의 상태
+  젓가락
+  ```
+
+- Synchronization variables
+
+  ``` c
+  // 코딩을 돕기 위해 hungry 상태를 추가했다.
+  enum {thinking, hungry, eating} state[5];
+  // 각 철학자가 젓가락 2개를 다 잡을 수 있는 상태라서 젓가락을 잡는 권한이 있는지(1), 없는지(0) 나타내는 세마포어 변수
+  semaphore self[5] = 0;
+  // state를 바꾸는 것은 자신이 아닌 다른 프로세스도 바꿀 수 있으므로 '공유 데이터'다.
+  // => 따라서 공유 데이터에 대한 동시 접근을 막기 위해 lock이 필요하다. 
+  semaphore mutex = 1;
+  ```
+
+  - 보통은 자원을 1 이상의 값으로 초기화 하는데, 이 코드는 특이하게 self를 0으로 초기화 한다.
+  - 테스트 하는 단계에서 조건에 맞으면 권한을 주는(self = 1) 방식으로 코딩했다.
+
+**철학자 프로세스**의 동작은 다음과 같다.
+
+1. pickup(i);
+
+   - P(mutex) ~ V(mutex): binary semaphore
+
+     - `공유 데이터`인 state를 수정하기 때문에 **lock**을 건다. (state[i] = hungry;)
+
+     - test(i);
+
+       => 철학자가 젓가락 2개를 모두 집을 수 있는 상황인지 test 한다.
+
+       - 젓가락 2개를 집을 수 있는 권한은
+
+         1. 왼쪽 철학자도 밥 먹고 있지 않고,
+
+         2. 오른쪽 철학자도 밥 먹고 있지 않으며,
+         3. 지금 내가 hugry 상태일 때 주어진다. (self[i] = 1)
+
+       - V(self[i]): binary semaphore
+
+         - 테스트 조건에 맞으면 권한을 준다.(V 연산)
+
+         - 테스트 조건에 맞지 않으면 if문(V연산)을 건너뛰고 나와서 P연산에서 기다리게 된다.
+
+   - P(self[i]): binary semaphore
+
+     - V연산을 하고 나왔으면, 젓가락을 얻어서 밥을 먹고 있으므로 '젓가락을 집을 수 있는 권한'을 뺏는다. (self[i] = 0)
+
+     - V연산을 하지 않고 나왔으면, 인접한 철학자 프로세스가 밥을 다 먹고 젓가락을 내려놓을 때까지 기다린다.
+
+2. eat();
+
+   : 젓가락 두 개를 집었으므로 먹는다.
+
+3. putdown(i);
+
+   : 젓가락을 내려놓는다.
+
+   - P(mutex) ~ V(mutex)
+
+     - `공유 데이터`인 state를 수정하기 때문에 **lock**을 건다. (state[i] = thinking;)
+
+     - test((i+4) % 5);
+
+       test((i+1) % 5);
+
+       => 왼쪽 철학자와 오른쪽 철학자의 상태를 test한다.
+
+       왼쪽 철학자가 배가 고픈데 젓가락을 못 집고 있는 상황이면
+
+       1. 그 철학자의 왼쪽 철학자도 밥 먹고 있지 않고,
+
+       2. 그 철학자의 오른쪽 철학자도 밥 먹고 있지 않으며, (thinking 상태이므로 만족)
+       3. 그 철학자가 hugry 상태일 때 권한이 주어진다. 
+          - 왼쪽 철학자가 `P연산`을 하여 self[i] = 1로 만들 수 있다.
+
+4. think();
 
 
 
+## 5. 모니터
 
+세마포어는 동기화 할 수 있는 방법(P 연산, V 연산)을 프로그래머에게 알려주고, 그 연산을 이용해서 작성된 프로그램을 동기화 하는 개념이다. 하지만 프로그래머가 실수를 하게 되면 동기화가 깨지는 단점이 있다.
 
+모니터는 **프로그래밍 언어 차원에서** `동시 접근과 관련된 문제`를 자동으로 해결해줌으로써 프로그래머의 부담을 줄여준다. 
 
-## 5. 병행 제어
+ex) Java의 스레드
+
+- Semaphore의 문제점
+
+  - 코딩하기 힘들다. 
+  - 정확성(correctness)의 입증이 어렵다. 즉 실수로 인한 버그가 생기기 쉽다.
+  - 자발적 협력(voluntary cooperation)이 필요하다.
+  - 한번의 실수가 모든 시스템에 치명적 영향
+
+- 예)
+
+  <img src="images/process_synchronization_10.JPG" style="zoom:80%;" />
+
+  1. P 연산과 V 연산의 순서를 바꿔서 코딩
+  2. P 연산 후에 또 P 연산을 하도록 코딩
+
+**[모니터]**
+
+따라서 **모니터**라는 개념을 `synchronization`을 위해 제공한다.
+
+모니터는 동시 수행중인 프로세스 사이에서 **`추상 자료형(abstract data type)`의 안전한 공유**를 보장하기 위한 **high-level synchronization construct**이다.
+
+=> 추상 자료형1 = 공유 데이터 + 공유 데이터에 대한 프로시저(연산)
+
+​	추상 자료형2 = condition variable + condition variable에 대한 연산
+
+즉, <u>프로그래밍 언어 차원에서</u> `synchronization 문제`를 해결하는 **synchronization construct(동기화 구조체)**이다.
+
+- `추상 구조체`이므로 언어마다 구현이 다르다.
+
+  - 모니터는 주로 **객체지향 프로그래밍**에서 지원된다.
+
+    : object + operation
+
+    모니터 내부의 프로시저를 통해서만 `공유 데이터`에 접근할 수 있다. (초기화 함수 포함)
+
+  ``` c
+  monitor monitor-name{
+      shared variable 선언(= 공유 데이터)
+      procedure body P1(...){
+          ...
+      }
+      procedure body P2(...){
+          ...
+      }
+      procedure body Pn(...){
+          ...
+      }
+      {
+          initialization code
+      }
+  }
+  ```
+
+<img src="images/process_synchronization_11.JPG" style="zoom:80%;" />
+
+모니터는 원천적으로 모니터 내부에 있는 프로시저가 동시에 여러 개가 실행되지 않도록 만들어졌다.
+
+- 프로그래머가 동기화 제약 조건을 명시적으로 코딩할 필요 없음
+
+  즉, 프로그래머 입장에서는 세마포어처럼 lock을 걸 필요가 없이 프로시저를 이용하여 모니터에 있는 공유 데이터에 접근하면 된다.
+
+모니터 내에서는 한 번에 하나의 프로세스만이 `활동 가능`하다. 그러한 프로세스의 상태를 `active ` 상태라고 한다.
+
+하나의 `active` 프로세스만이 모니터를 실행할 수 있다.
+
+- 모니터 코드를 실행하다가 **context switch**가 발생하면, 여전히 해당 프로세스는 `active` 상태로 모니터 내부에 남아있다.
+
+  따라서 다른 프로세스들은 모니터 안에 있는 코드를 실행하지 못하고 <u>모니터 밖의 큐</u>에서 대기한다.
+
+  > 모니터는 해당 구조체에 active process가 있을 때 다른 프로세스가 접근하지 못하지만, 모니터 코드 실행 도중에 **context switch(타이머 인터럽트 포함)**가 발생할 수 있으므로 **enable/disable interrupt 방식은 아니다**.
+
+- active 프로세스 = 1(true)일 때, 나머지 프로세스는 **entry queue**에서 기다리도록 한다.
+
+- active 프로세스 = 0(false)이 될 때, 다음 프로세스 1개 진입 가능
+
+  - `active` -> `terminated` 상태로 변환(모니터 빠져나감)
+  - `active` -> `sleep` 상태로 변환(조건 충족x)
+    - 유한 버퍼 문제를 예시로 들면, consume() 프로시저를 너무 많이 호출해서 자원의 여분이 없을 경우
+    - 이 때는 <u>모니터 밖의 entry queue</u>가 아닌, <u>모니터 내부의 condition queue</u></u>에서 기다린다.
+
+**[condition variable]**
+
+> 프로그래머는 모니터를 사용함으로써 세마포어 연산(P, V)의 기능 중 **lock을 거는 기능**은 명시해줄 필요가 없지만,
+>
+> 세마포어 연산의 **자원의 개수를 세는 기능**은 명시해줘야 한다.
+>
+> - 자원의 개수를 세어서 자원이 있으면 접근 가능하게 함
+> - 자원이 없으면 기다리게 함
+>
+> **=> condition variable**
+
+프로세스가 <u>모니터 안에서</u> 기다릴 수 있도록 하기 위해 **condition variable**을 사용한다.
+
+- condition queue
+
+`condition variable`은 세마포어 변수처럼 자원의 개수를 세거나 값을 가지는 변수가 아니라, **어떤 프로세스를 잠들게 하고 줄 세우게 하기 위한 변수**다.
+
+``` c
+// 자원 x의 여분이 있으면 접근할 수 있게 하고, 여분이 없으면 '모니터 내부에서' 줄 서서 기다리게 한다.
+condition x, y;
+```
+
+- condition variable은 `wait 연산`과 `signal 연산`에 의해서만 접근 가능
+
+  -  x.wait()
+
+    : x.wiat()을 실행한 프로세스는 **다른 프로세스가 x.signal()을 invoke하기 전까지 `suspend` 된다**.
+
+  - x.signal()
+
+    : x.signal()은 정확하게 **1개**의 `suspend` 된 프로세스를 `resume` 한다.
+
+    `suspend` 된 프로세스가 없으면 아무 일도 일어나지 않는다.
+
+### 1) 유한 버퍼 문제(Bounded-Buffer Problem)
+
+<img src="images/process_synchronization_12.JPG" style="zoom:80%;" />
+
+- Shared data
+
+  ``` c
+  int buffer[N];
+  ```
+
+  - `공유 버퍼`가 모니터 내부에 정의된다.
+  - 모니터 내부 코드를 실행해야 하므로, 여러 개의 생산자 프로세스 또는 소비자 프로세스 중 하나의 프로세스만 실행된다.
+    - 생산자 프로세스가 실행 중일 때, 생산자 프로세스는 물론 소비자 프로세스도 실행될 수 없다.
+  - 따라서 버퍼 접근 코드 전, 후로 lock을 거는 작업이 없다.
+
+- Condition variable
+
+  ``` c
+  condition full, empty;
+  ```
+
+**생산자 프로세스**의 동작은 다음과 같다.
+
+1. Empty 버퍼가 있나요? (`if문`)
+   - empty buffer가 없다면 empty.wait()으로 줄 서서 `blocked(sleep)` 상태가 된다.
+     - 나중에 소비자 프로세스가 empty.signal()을 실행하여 empty buffer가 생기면, **empty buffer 큐의 생산자 프로세스**가 순서대로 하나씩 `active`가 된다.
+   - empty buffer가 있다면 `if문` 코드 생략
+
+2. Empty buffer에 데이터 입력 및 buffer 조작
+   - 세마포어와 달리 전, 후로 lock을 거는 단계가 생략된다.
+3. 자원(Full buffer)의 개수 하나 증가
+   - full.signal()로 full buffer가 없어서 잠든 소비자 프로세스를 깨워준다.
+     - full buffer가 생기면 **full 큐의 소비자 프로세스**가 순서대로 하나씩 `active` 상태가 된다.
+
+**소비자 프로세스**의 동작은 반대이다.
+
+> 모니터의 코드가 세마포어의 코드보다 프로그래밍 관점에서 더 자연스럽다.
+>
+> - 모니터가 동시접근을 차단하고
+> - 특정 조건을 만족하지 못하면 큐에 줄 세운다.
+>
+> 세마포어는 `if문` 없이 **조건 체크**와 **resource counting(+대기큐 관리)**을 P, V 연산으로만 코딩하는데, 프로그램 관점에서 정확히 무슨 일을 하는지 직관적으로 파악하기 어렵다.
+>
+> 모니터는 고급 언어의 `if문`을 사용하여 조건을 체크하고 wait, signal 연산으로 **resource counting(+대기큐 관리)**을 하므로 더 직관적인 코드를 갖는다.
+
+세마포어 버전의 코드와 모니터 버전의 코드는 서로 쉽게 변환될 수 있다.
+
+- `공유 데이터`를 접근할 때 lock/unlock 코드 <-> lock/unlock 코드 사용 안함
+
+- `공유 자원`의 개수를 세는 세마포어 변수 <-> 프로세스를 잠들게하거나 깨우는 condition 변수
+
+- 조건을 만족시키지 못하면(`if문` 없이 조건체크는 P, V 연산 내부에서 한다) 잠드는 P 연산, 프로세스를 깨우는 V 연산 
+
+  <-> 조건을 만족시키지 못하면(`if문`) 잠드는 <u>condition 변수의</u> wait 연산, 프로세스를 깨우는 signal 연산
+
+  - P, V 연산은 '세마포어 변수의 값'을 증가시키거나 감소시킨다.
+  - wait, signal 연산은 컨디션 변수의 값을 증가시키거나 감소시키지 않는다. 내부 구현은 정의되지 않았지만 컨디션 변수 자체로는 정수값을 갖지 않도록 정의되었다.(내부적으로는 자원의 개수를 counting하지 않을까?) 
+
+### 2) 식사하는 철학자 문제(Dining-Philosophers Problem)
+
+<img src="images/process_synchronization_13.JPG" style="zoom:80%;" />
+
+*세마포어와의 차이점은 1) lock 연산을 하지 않는다. 2) 잠들 때 if문으로 체크한다. 두 가지이다.*
+
+- Shared data
+
+  ``` c
+  enum {thinking, hungry, eating} state[5]; // 각 철학자 프로세스의 상태
+  젓가락
+  ```
+
+- Condition variable
+
+  ``` c
+  // 각 철학자가 젓가락 2개를 다 잡을 수 있는 상태라서 젓가락을 잡는 권한이 있는지, 없는지
+  condition self[5]; 
+  ```
+
+**철학자 프로세스**의 동작은 다음과 같다.
+
+1. pickup(i);
+
+   - `공유 데이터`인 state를 수정하는데 **lock**을 걸 필요 없다. (state[i] = hungry;)
+
+   - test(i);
+
+     => 철학자가 젓가락 2개를 모두 집을 수 있는 상황인지 test 한다.
+
+     - 젓가락 2개를 집을 수 있는 권한은
+
+       1. 왼쪽 철학자도 밥 먹고 있지 않고,
+
+       2. 오른쪽 철학자도 밥 먹고 있지 않으며,
+       3. 지금 내가 hugry 상태일 때 주어진다. 
+     - self[i].signal()
+       - 잠들어 있는 프로세스를 깨우는데, 현재 test를 실행하고 있는 이 프로세스는 이미 `active` 상태이기 때문에 무시한다.
+
+   - 세마포어의 V연산과 달리 `if문`으로 state[i]의 상태를 파악한다.
+
+     - state[i] == eating이면 조건(젓가락 2개를 집을 수 있는 권한)을 만족했으므로 `if문`을 무시하고
+     - state[i] != eating이면 조건을 만족하지 못 했으므로 self[i].wait()으로 잠든다.
+
+2. eat();
+
+   : 젓가락 두 개를 집었으므로 먹는다.
+
+3. putdown(i);
+
+   : 젓가락을 내려놓는다.
+
+   - `공유 데이터`인 state를 수정하는데 **lock**을 걸 필요 없다. (state[i] = thinking;)
+
+   - test((i+4) % 5);
+
+     test((i+1) % 5);
+
+     => 왼쪽 철학자와 오른쪽 철학자의 상태를 test한다.
+
+     왼쪽 철학자가 배가 고픈데 젓가락을 못 집고 있는 상황이면
+
+     1. 그 철학자의 왼쪽 철학자도 밥 먹고 있지 않고,
+
+     2. 그 철학자의 오른쪽 철학자도 밥 먹고 있지 않으며, (thinking 상태이므로 만족)
+     3. 그 철학자가 hugry 상태일 때 권한이 주어진다. 
+        - 왼쪽 철학자가 잠든 상태라면 `signal 연산`을 하여 깨워준다.
+
+4. think();
