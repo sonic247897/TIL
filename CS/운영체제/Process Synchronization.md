@@ -231,7 +231,7 @@ SW적으로 **lock**을 걸어서 해결하는 알고리즘들이 있다.
 
 ### SW적인 lock 알고리즘
 
-프로그래머가 커널을 작성할 때나, 공유메모리를 사용하는 프로그램을 작성할 때 `synchronization 문제`를 고려하여 작성해야 한다.
+프로그래머가 **멀티프로세서 시스템의 커널**을 작성할 때나, **공유메모리를 사용하는 프로그램**을 작성할 때 `synchronization 문제`를 고려하여 작성해야 한다.
 
 이때 다음과 같은 알고리즘들이 고려된다. 
 
@@ -325,9 +325,24 @@ CPU를 빼앗기지 않고 **<u>고급 언어</u>의 critical section**을 모�
 
   => 따라서 `critical section 문제`를 해결하지 못한다.
 
+> `turn`은 critical section을 나온 후에 순서를 바꿔줘서 문제가 발생했고,
+>
+> `flag`는 critical section에 들어가기 전에 깃발을 올려서 문제가 발생한다.
+
 #### 3) Peterson's Algorithm
 
 순서를 정하는 변수 `turn`과 깃발 `flag`를 모두 사용한다.
+
+- Synchronization variable
+
+  ``` c
+  int turn;
+  turn = 0;	// 초기화) Pi는 turn == i일 때 임계구역 진입 가능
+  boolean flag[2];	  // 참고) c 표준은 bool형 변수가 없다.
+  flag[모두] = fasle;	// 초기화) 둘 다 임계구역에 들어가고자 하는 상태는 아님
+  // Pi가 임계구역에 들어가려면 먼저 flag를 true로 만들어서 의사 표시를 한다.
+  flag[i] = true;
+  ```
 
 - Process Pi
 
@@ -378,7 +393,7 @@ CPU를 빼앗기지 않고 **<u>고급 언어</u>의 critical section**을 모�
 
   - 데이터 a는 0과 1의 값만 가진다.
 
-  - 이 함수는 a의 원래값을 읽어서 리턴하고, 그 다음 무조건 a = 1로 바꿔준다.
+  - 이 함수는 a의 원래값을 읽어서 리턴하고(test), 그 다음 무조건 a = 1로 바꿔준다.(set)
 
 <img src="images/process_synchronization_03.JPG" style="zoom:80%;" />
 
@@ -491,6 +506,7 @@ CPU를 빼앗기지 않고 **<u>고급 언어</u>의 critical section**을 모�
   typedef struct{
       int value;	// semaphore 변수 값
       struct process* L;	// 프로세스 wait 큐 - 세마포어 때문에 잠들어 있는 프로세스들을 연결하기 위한 큐
+      // struct process는 PCB 구조체
   } semaphore;
   ```
 
@@ -636,6 +652,8 @@ Semaphore의 구체적인 구현은 다음과 같다.
 
 프로세스가 `suspend`된 이유에 해당하는 **`세마포어 큐`에서 빠져나갈 수 없는 현상**.
 
+- suspended blocked ?
+
 `Indefinite(무기한) blocking`이라고도 부른다.
 
 - 위의 deadlock도 일종의 starvation으로 볼 수 있다.
@@ -695,7 +713,7 @@ circular 형태의 유한한 크기의 버퍼가 존재한다.
 
     : `binary semaphore` 변수가 1개 필요하다.
 
-    - shared data의 mutual exclusion(mutex, lock)을 위해
+    - 공유 버퍼의 mutual exclusion(mutex, lock)을 위해
 
   - resource count
 
@@ -751,7 +769,7 @@ circular 형태의 유한한 크기의 버퍼가 존재한다.
     - P(empty): integer semaphore
 
       - 공유버퍼에 데이터를 집어넣기 전에 빈 버퍼가 있는지 확인하고, 있으면 획득한다.
-      - 빈 버퍼가 없으면 기다린다. (`sleep lock`)
+      - 빈 버퍼가 없으면 기다린다. (`sleep lock` 방식으로 구현한 경우)
 
     - P(mutex): binary semaphore
 
@@ -933,6 +951,7 @@ circular 형태의 유한한 크기의 버퍼가 존재한다.
 - Shared data
 
   ``` c
+  // 코딩을 돕기 위해 hungry 상태를 추가했다.
   enum {thinking, hungry, eating} state[5]; // 각 철학자 프로세스의 상태
   젓가락
   ```
@@ -940,16 +959,16 @@ circular 형태의 유한한 크기의 버퍼가 존재한다.
 - Synchronization variables
 
   ``` c
-  // 코딩을 돕기 위해 hungry 상태를 추가했다.
-  enum {thinking, hungry, eating} state[5];
   // 각 철학자가 젓가락 2개를 다 잡을 수 있는 상태라서 젓가락을 잡는 권한이 있는지(1), 없는지(0) 나타내는 세마포어 변수
   semaphore self[5] = 0;
+  //* 젓가락을 lock/unlock 하는 것이라면 1로 초기화 할텐데, 그러지 않고 '젓가락에 대한 권한'을 lock/unlock (세마포어 철학에 맞게 짜여진 코드가 아님)
   // state를 바꾸는 것은 자신이 아닌 다른 프로세스도 바꿀 수 있으므로 '공유 데이터'다.
   // => 따라서 공유 데이터에 대한 동시 접근을 막기 위해 lock이 필요하다. 
   semaphore mutex = 1;
   ```
-
-  - 보통은 자원을 1 이상의 값으로 초기화 하는데, 이 코드는 특이하게 self를 0으로 초기화 한다.
+  
+- 보통은 자원을 1 이상의 값으로 초기화 하는데, 이 코드는 특이하게 self를 0으로 초기화 한다.
+  
   - 테스트 하는 단계에서 조건에 맞으면 권한을 주는(self = 1) 방식으로 코딩했다.
 
 **철학자 프로세스**의 동작은 다음과 같다.
@@ -991,7 +1010,9 @@ circular 형태의 유한한 크기의 버퍼가 존재한다.
 
    : 젓가락을 내려놓는다.
 
-   - P(mutex) ~ V(mutex)
+   > 양쪽 철학자의 state를 바꿀 수 있다. 왜냐하면 **같은 프로세스**가 공유 데이터인 state에 계속 접근하고 있는 상태이기 때문이다.
+
+   - P(mutex) ~ V(mutex): binary semaphore
 
      - `공유 데이터`인 state를 수정하기 때문에 **lock**을 건다. (state[i] = thinking;)
 
@@ -1006,7 +1027,11 @@ circular 형태의 유한한 크기의 버퍼가 존재한다.
        1. 그 철학자의 왼쪽 철학자도 밥 먹고 있지 않고,
 
        2. 그 철학자의 오른쪽 철학자도 밥 먹고 있지 않으며, (thinking 상태이므로 만족)
+
        3. 그 철학자가 hugry 상태일 때 권한이 주어진다. 
+
+          - 왼쪽 철학자가 state[i] = eating이 된다.
+
           - 왼쪽 철학자가 `P연산`을 하여 self[i] = 1로 만들 수 있다.
 
 4. think();
