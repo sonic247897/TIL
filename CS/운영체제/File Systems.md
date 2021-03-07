@@ -22,7 +22,7 @@
 
     - ex) 하드디스크
 
-  - 운영체제는 <u>다양한 저장 장치</u>를 **file이라는 동일한 논리적 단위**로 볼 수 있게 해줌
+  - `운영체제`는 <u>다양한 저장 장치</u>를 **file이라는 동일한 논리적 단위**로 볼 수 있게 해줌
 
   - 연산(Operation)
 
@@ -48,7 +48,7 @@
 
       > open과 close가 따로 정의되어야 하는 이유는 이후에 설명한다.
       >
-      > - open: 디스크에서 메모리로 파일의 내용을 올려놓는 것이 아니라, 파일의 **메타 데이터**를 `메모리`에 올려 놓는 작업을 한다.
+      > - open: 디스크에서 메모리로 **파일의 내용**을 올려놓는 것이 아니라, 파일의 **메타 데이터**를 `메모리`에 올려 놓는 작업을 한다.
 
 - File attribute (파일의 meta data)
 
@@ -71,7 +71,7 @@
   - **파일의 메타데이터 중 일부를 보관**하고 있는 일종의 특별한 `파일`
     
     - 그 디렉토리에 속한 파일 이름 및 파일 attribute들을 저장함
-    - `디렉토리`에 저장되지 않는 메타데이터는 다른 곳에 저장되기도 한다.
+    - `디렉토리`에 저장되지 않은 메타데이터는 다른 곳에 저장되기도 한다.
   - 연산(Operation)
     - search for a file, create a file, delete a file
 
@@ -121,26 +121,26 @@
     - **Open을 read/write와 별도로 두는 이유임**
     - <u>한 번 open한 파일은 read/write 시 directory search 불필요</u>
 
-  - Open file table
+- Open file table
 
-    - 현재 `open`된 파일들의 **메타데이터** 보관소 
+  - 현재 `open`된 파일들의 **메타데이터** 보관소 
 
-    - 물리적 메모리에 저장
+  - 물리적 메모리에 저장
 
-    - **global**한 `테이블(배열)`이 유지된다.
+  - **global**한 `테이블(배열)`이 유지된다.
 
-    - `디스크`의 메타데이터보다 몇 가지 정보가 추가됨
+  - `디스크`의 메타데이터보다 몇 가지 정보가 추가됨
 
-      - Open한 프로세스의 수
+    - Open한 프로세스의 수
 
-      - File offset: 각 프로세스가 파일의 어느 위치에 접근 중인지 표시
+    - File offset: 각 프로세스가 파일의 어느 위치에 접근 중인지 표시
 
-        **=> 하나의 파일마다 각 프로세스별 offset을 저장하려면 별도의 테이블이 추가로 필요하다.**
+      **=> 각 프로세스가 접근하는 각 파일마다 offset을 저장하려면 별도의 테이블이 추가로 필요하다.**
 
-  - File descriptor (file handle, file control block)
+- File descriptor (file handle, file control block)
 
-    - Open file table에 대한 위치 정보
-    - **프로세스마다 `File descriptor 테이블(배열)`이 하나씩 존재한다.**
+  - Open file table에 대한 위치 정보
+  - **프로세스마다 `File descriptor 테이블(배열)`이 하나씩 존재한다.**
 
 **[파일 open과 read를 하는 과정]**
 
