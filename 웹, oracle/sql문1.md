@@ -1,8 +1,9 @@
 ## 1. Query - 기본 select
 
->  select 컬럼명1, 컬럼2....
->
-> from 테이블
+``` sql
+select 컬럼명1, 컬럼2....
+from 테이블
+```
 
 - sql문은 대소문자 구분하지 않는다.
 
@@ -37,8 +38,6 @@ SQL> select empno, ename, hiredate, job
 14 rows selected.
 ```
 
-
-
 - *는 모든 컬럼을 조회하겠다는 의미
 
 - 컬럼에 null을 저장할 수 있다.
@@ -51,11 +50,11 @@ SQL> select empno, ename, hiredate, job
 
 - 컬럼명 대신 alias를 정의해서 사용할 수 있다.
 
-  select 컬럼명 alias명, 컬럼명 as alias명, 컬럼명 "alias명"
+  select 컬럼명 alias명, 컬럼명 as alias명, 컬럼명 `"alias명"`
 
   ​																		(alias명에 공백이 있는 경우 사용)
 
-  -> alias에서만 " "을 쓸 수 있다.
+  **-> alias에서만 " "을 쓸 수 있다.**
 
 ``` sql
 SQL> select ename 사원명, hiredate as 입사일, sal as "나의 급여" FROM emp;
@@ -85,9 +84,9 @@ MILLER               82/01/23       1300
 
 - 여러 컬럼을 합쳐서 하나의 컬럼으로 조회할 수 있다.
 
-  |연산자 이용(String의 concat과 비슷한 개념으로 사용)
+  `|| 연산자` 이용(String의 concat과 비슷한 개념으로 사용)
 
-- 오라클의 문자열, 날짜 데이터는 ' '로 표현
+- 오라클의 **문자열, 날짜** 데이터는 `' '`로 표현
 
 ``` sql
 SQL> select '나의 입사일은' || hiredate || '입니다.'
@@ -116,9 +115,9 @@ SQL> select '나의 입사일은' || hiredate || '입니다.'
 14 rows selected.
 ```
 
-- 연산의 결과로 컬럼을 생성할 수 있다. (+,*,/,- 함수...)
+- 연산의 결과로 컬럼을 생성할 수 있다. (+, *, /, - 함수...)
   - 원본 데이터는 변경할 수 없다.
-  - 단, null이 포함되어 있는 컬럼은 연산할 수 없다.
+  - **단, null이 포함되어 있는 컬럼은 연산할 수 없다.**
 
 ``` sql
 SQL> select ename, sal, comm, sal+comm 급여합
@@ -147,7 +146,7 @@ MILLER                     1300
 14 rows selected.
 ```
 
-- 중복이 있는 경우 중복을 제거하기 위해 select문에 distinct를 추가할 수 있다.
+- 중복이 있는 경우 중복을 제거하기 위해 select문에 **distinct**를 추가할 수 있다.
 
 ``` sql
 SQL> select job from emp;
@@ -183,6 +182,8 @@ SALESMAN
 PRESIDENT
 MANAGER
 ANALYST
+
+5 rows selected.
 ```
 
 ### [실습예제]
@@ -226,7 +227,7 @@ ANALYST
 
    - 연봉은 급여와 comm을 이용해서 계산
 
-     (null이 포함된 항목은 계산되지 않는다)
+     **(null이 포함된 항목은 계산되지 않는다)**
 
 ``` sql
 SQL> select empno, sal as 월급여,comm, sal*12+comm 연봉
@@ -255,22 +256,26 @@ SQL> select empno, sal as 월급여,comm, sal*12+comm 연봉
 14 rows selected.
 ```
 
+
+
 ## 2. Select절에 조건 추가하기
 
+``` sql
 select [distinct] 컬럼명, 컬럼명,....[alias명]
-
 from 테이블명
-
 where 조건
+```
 
 - 검색 결과를 제한(조건에 만족하는 데이터만 조회하겠다는 의미)
 - where절은 from절 다음에 정의
 - where절은 조건식이 true가 되도록 정의
 - where절에 사용할 수 있는 비교 연산자: >, >=, <, <=, <>
 
-> **=** 같다,  **!=**, **<>** 같지 않다
+> **=** : 같다
+>
+> **!=**, **<>** : 같지 않다
 
-- where절에서 조건과 함께 비교하는 값을 추가해야 하는 경우 문자, 날짜는 작은 따옴표로 묶어줘야 한다.
+- where절에서 조건과 함께 비교하는 값을 추가해야 하는 경우 **문자(열), 날짜**는 작은 따옴표로 묶어줘야 한다.
 - SQL은 대소문자를 구분하지 않는다. 그러나 값을 비교하는 경우 정확하게 대소문자까지 일치해야 한다.
 
 ``` sql
@@ -292,7 +297,7 @@ CLARK                MANAGER            81/06/09       2450
 
 SQL> select ename, job, hiredate, sal
   2  from emp
-  3  where sal >3000;
+  3  where sal > 3000;
 
 ENAME                JOB                HIREDATE        SAL
 -------------------- ------------------ -------- ----------
@@ -313,21 +318,20 @@ MILLER               CLERK              82/01/23       1300
 
 - 두 개 이상의 조건이 있는 경우 사용할 수 있는 연산자
 
-  and 연산자: 모든 조건이 일치
+  - and 연산자: 모든 조건이 일치
 
-  between A and B: `and연산`과 동일(같은 컬럼에서 조건을 비교하는 경우)
-
-   2000<=sal & sal<=5000  **=** between 2000 and 5000
-
-  or 연산자: 모든 조건 중 한 개만 일치(조건이 모두 다른 컬럼인 경우)
-
-  in 연산자: `or연산자`의 의미와 동일
-
-  ​				 컬럼명 in (비교할 값, 값, ..........)  
-
-  (같은 컬럼에서 값을 여러개 비교해야 하는 경우 더 쉽게 비교하기 위해 만들어진 or)
-
-  not 연산자: 부정
+  - between A and B: `and 연산`과 동일**(같은 컬럼에서 조건을 비교하는 경우 사용가능)**
+  - 2000<=sal & sal<=5000 는 between 2000 and 5000 와 동일
+  
+- or 연산자: 모든 조건 중 한 개만 일치(조건이 모두 다른 컬럼인 경우)
+  
+- in 연산자: `or 연산자`의 의미와 동일
+  
+​				 컬럼명 in (비교할 값, 값, ..........)  
+  
+​	**(같은 컬럼에서 값을 여러개 비교해야 하는 경우 더 쉽게 비교하기 위해 만들어진 or)**
+  
+- not 연산자: 부정
 
 ``` sql
 SQL> select *
@@ -350,9 +354,9 @@ SQL> select ename, job, deptno
 
 - null 값에 대한 비교
 
-  is null: null인 데이터를 조회
+  - is null: null인 데이터를 조회
 
-  is not null: null이 아닌 데이터를 조회
+  - is not null: null이 아닌 데이터를 조회
 
 ``` sql
 SQL> select ename, sal, comm
@@ -369,16 +373,18 @@ TURNER                     1500          0
 
 - like 연산자: 대표문자와 함께 사용
 
-  - 조건 비교를 위해 입력한 값이 문자열에 포함되어 있는 것을 찾는 경우
+  - 조건 비교를 위해 입력한 값이 문자열에 포함되어 있는 데이터를 찾는 경우
   - %: 모든 문자열
   - _: 한 자리 문자를 의미
-  - 컬럼명 like 값% (값으로만 시작하면 어떤것이든 선택)
+  - 컬럼명 like 값% ('값'으로만 시작하면 어떤것이든 선택)
 
-  ​					%값(값으로만 끝나면 어떤것이든 선택)
+  ​					%값('값'으로만 끝나면 어떤것이든 선택)
 
-  ​					%값%(중간에 값이 있으면 어떤것이든 선택)
+  ​					%값%(중간에 '값'이 있으면 어떤것이든 선택)
 
-   		like _A_____ _ _  _ : 두번째에 A가 들어간 5자리
+  ```sql
+  	like _A___ : 두번째에 A가 들어간 5자리
+  ```
 
 ``` sql
 SQL> select ename, sal, comm
@@ -401,23 +407,23 @@ MARTIN                     1250       1400
 JAMES                       950
 ```
 
+
+
 ### 3. 정렬
 
-> select [distinct] 컬럼명, 컬럼명, .... [alias명]
->
-> from 테이블명
->
-> where 조건
->
-> order by 컬럼명 정렬기준
->
-> ​							-------------> asc, desc
+``` sql
+select [distinct] 컬럼명, 컬럼명, .... [alias명]
+from 테이블명
+where 조건
+order by 컬럼명 정렬기준
+			   ---------> asc, desc
+```
 
 - asc: 오름차순 정렬
 
   desc: 내림차순 정렬
 
-  정렬기준을 생략하면 기본은 오름차순
+  > 정렬기준을 생략하면 **기본은 오름차순**이다.
 
 - 오름차순: 1 2 3 4 5 6 7 8 9...
 
@@ -483,5 +489,3 @@ JAMES                       950
   ```
 
   
-
-  ​				
