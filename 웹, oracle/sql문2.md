@@ -473,18 +473,18 @@ order by 정렬할 컬럼명								--순서주의!!
 
   - 테이블에 저장된 레코드를 `그룹화` 하여 분류하고 싶은 경우 사용
 
-  - **그룹함수() -> NULL이 있으면 그 레코드는 세지 않으므로 `primary key`인 컬럼을 지정한다.** ex) empno
+  - **`그룹함수()` -> NULL이 있으면 그 레코드는 세지 않으므로 `primary key`인 컬럼을 지정한다.** ex) empno
 
-  - **select절에는 group by절에 명시한 컬럼명과 그룹함수만 사용할 수 있다.**
+  - **select절에는 group by절에 명시한 <u>컬럼명</u>과, <u>그룹함수(group by절에 명시하지 않은 컬럼도 가능)</u>만 사용할 수 있다.**
 
-    => group by deptno,`+a` 했으면 select deptno,`+a`, `그룹함수()` 만 가능
+    => group by deptno,`+a` 했으면, select deptno,`+a ` 혹은 `그룹함수()` 만 가능
 
 ``` sql
 SQL> select deptno, count(empno)
 2  from emp
 3  group by deptno;
 
-DEPTNO COUNT(EMPNO)
+DEPTNO 		COUNT(EMPNO)
 ---------- ------------
 30            6
 20            5
@@ -513,7 +513,7 @@ ANALYST                  3000
 
 ```
 
-- 데이터가 복잡한 경우 group by 절에 두 개 이상의 컬럼을 명시할 수 있다.
+- 데이터가 복잡한 경우 `group by 절`에 두 개 이상의 컬럼을 명시할 수 있다.
 
 ``` sql
  -- 직업별, 부서별 인원수와 최대연봉
@@ -537,11 +537,11 @@ SALESMAN                   30            4       1600
 9 rows selected.
 ```
 
-- group by 하기 전에 적용해야 하는 조건은 where절에 정의
+- group by 하기 전에 적용해야 하는 조건은 `where절`에 정의
 
-- gruop by 한 결과에 조건을 적용해야 하는 경우 having절을 이용
+- gruop by 한 결과에 조건을 적용해야 하는 경우 `having절`을 이용
 
-  (조건에 그룹함수를 써야 하면 having에 추가) 
+  (조건에 `그룹함수`를 써야 하면 having에 추가) 
 
   
 

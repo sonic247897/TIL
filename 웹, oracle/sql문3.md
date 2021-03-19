@@ -207,11 +207,11 @@ KING                              3
 
 - select문에서 주로 사용하고 select문에 삽입된 select문
 
-  바깥쪽의 query를 main query, 안쪽에 삽입된 query를 sub query라고 한다.
+  바깥쪽의 query를 **main query**, 안쪽에 삽입된 query를 **sub query**라고 한다.
 
 - sub query는 괄호로 묶어 주어야 한다.
 
-- sub query는 메인쿼리가 실행되기 전에 한 번 실행되며(가상 메모리 할당) 그 실행결과를 메인쿼리에 사용한다.  
+- sub query는 메인쿼리가 실행되기 전에 한 번 실행되며(`가상 메모리 할당`) 그 실행결과를 메인쿼리에 사용한다.  
 
   => **뷰**: db 데이터가 변경되면 view가 실행되면서 변경된 내용이 갱신된다. 하지만 sub query는 실행될 때 메인쿼리보다 먼저 실행되어 `가상메모리`에 한번 올라왔다가 메인쿼리 실행 후에는 사라진다.
 
@@ -219,7 +219,7 @@ KING                              3
 
 10번 부서의 평균 급여보다 급여를 많이 받는 사원들을 조회
 
-​	-> where절에 avg(sal) 못 씀
+=> where절에 avg(sal) 못 씀
 
 ``` sql
 SQL> select avg(sal)

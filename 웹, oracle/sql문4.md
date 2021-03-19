@@ -32,7 +32,6 @@ SQL> alter table member
   2  drop column info;
 
 Table altered.
-
 ```
 
 - rename (이름 재설정)
@@ -303,9 +302,9 @@ SQL> alter table member
 Table altered.
 ```
 
-- primary key
+- **primary key**
 
-  = NOT NULL + UNIQUE
+  **= NOT NULL + UNIQUE**
 
 
 
