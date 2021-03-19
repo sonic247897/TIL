@@ -313,7 +313,6 @@ SCOTT                ANALYST            82/12/09       3000
 ADAMS                CLERK              83/01/12       1100
 MILLER               CLERK              82/01/23       1300
 
-
 ```
 
 - 두 개 이상의 조건이 있는 경우 사용할 수 있는 연산자
@@ -323,15 +322,14 @@ MILLER               CLERK              82/01/23       1300
   - between A and B: `and 연산`과 동일**(같은 컬럼에서 조건을 비교하는 경우 사용가능)**
   - 2000<=sal & sal<=5000 는 between 2000 and 5000 와 동일
   
-- or 연산자: 모든 조건 중 한 개만 일치(조건이 모두 다른 컬럼인 경우)
+  - or 연산자: 모든 조건 중 한 개만 일치(조건이 모두 다른 컬럼인 경우)
+    
+  - in 연산자: `or 연산자`의 의미와 동일
   
-- in 연산자: `or 연산자`의 의미와 동일
+  ​				 컬럼명 in (비교할 값, 값, ..........)  
   
-​				 컬럼명 in (비교할 값, 값, ..........)  
-  
-​	**(같은 컬럼에서 값을 여러개 비교해야 하는 경우 더 쉽게 비교하기 위해 만들어진 or)**
-  
-- not 연산자: 부정
+  ​		**(같은 컬럼에서 값을 여러개 비교해야 하는 경우 더 쉽게 비교하기 위해 만들어진 or)**
+  - not 연산자: 부정
 
 ``` sql
 SQL> select *
@@ -464,6 +462,10 @@ order by 컬럼명 정렬기준
   
   14 rows selected.
   
+  SQL>  select ename, sal, job
+    2   from emp
+    3   order by job desc;
+  
   ENAME                       SAL JOB
   -------------------- ---------- ------------------
   ALLEN                      1600 SALESMAN
@@ -483,9 +485,9 @@ order by 컬럼명 정렬기준
   JAMES                       950 CLERK
   FORD                       3000 ANALYST
   SCOTT                      3000 ANALYST
-  
+
   14 rows selected.
   
   ```
-
+  
   

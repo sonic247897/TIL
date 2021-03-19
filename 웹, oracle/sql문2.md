@@ -36,57 +36,57 @@
 
   **찾을 위치를 -1로 정의하면 문자열의 오른쪽 끝에서 문자를 찾는다.**
 
-  ``` sql
+``` sql
 SQL> select substr('oracle',2) from dual;
-  
+
 SUBSTR('OR ')
 ----------
 racle
-  
+
 SQL> select substr('oracle',2,2) from dual;
-  
+
 SUBS
 ----
 ra
-  
+
 SQL> select length('oracle') from dual;
-  
+
 LENGTH('ORACLE')
 ----------------
-               6
-  
+6
+
 SQL> select length('오라클') from dual;
-  
+
 LENGTH('오라클')
 ----------------
-               3
-  ```
+3
+```
 
-  ``` sql
+``` sql
 SQL> select instr('oracle oracle oracle', 'a') from dual;
-  
+
 INSTR('ORACLEORACLEORACLE','A')
 -------------------------------
-                              3
-  
+3
+
 SQL> select instr('oracle oracle oracle', 'a', 5) from dual;
-  
+
 INSTR('ORACLEORACLEORACLE','A',5)
 ---------------------------------
-                               10
-              -- 5번째 위치부터 찾는다.
+10
+-- 5번째 위치부터 찾는다.
 SQL> select instr('oracle oracle oracle', 'a', 5, 2) from dual;
-  
+
 INSTR('ORACLEORACLEORACLE','A',5,2)
 -----------------------------------
-                                 17 --5번 위치에서부터 2번째 만나는 a의 위치 반환
+17 --5번 위치에서부터 2번째 만나는 a의 위치 반환
 SQL> select instr('oracle oracle oracle', 'a', -1, 2) from dual;
-  
+
 INSTR('ORACLEORACLEORACLE','A',-1,2)
 ------------------------------------
-                                  10
+10
 -- -1은 lastindexof와 같다. 뒤에서부터 훑어서 2번째 만나는 a의 위치 변환
-  ```
+```
 
 - concat(문자열 or 컬럼명, 문자열 or 컬럼명): `|| 연산자`와 동일. 문자열 연결
 
@@ -100,19 +100,25 @@ INSTR('ORACLEORACLEORACLE','A',-1,2)
 
   **주로 주민번호 같이 숨겨야 하는 정보에 사용한다.**
 
-  ``` sql
+``` sql
+SQL> select concat('oracle', concat('dbms', 'hello')) from dual;
+
+CONCAT('ORACLE',CONCAT('DBMS',
+------------------------------
+oracledbmshello
+                       
 SQL> select lpad('oracle', 10, '*') from dual;
-  
+
 LPAD('ORACLE',10,'*'
 --------------------
 ****oracle
-  
+
 SQL> select rpad('oracle', 10, '*') from dual;
-  
+
 RPAD('ORACLE',10,'*'
 --------------------
 oracle****
-  ```
+```
 
 - ltrim(문자열 or 컬럼명, `제거할 문자`)
 
@@ -130,43 +136,37 @@ oracle****
 
   : 제거할 문자를 양쪽에서 찾아 모두 제거
 
-  ``` sql
+``` sql
 SQL> select ltrim('              oracle',' ') from dual;
-  
+
 LTRIM('ORACL'
 ------------
 oracle
-  
-SQL> select concat('oracle', concat('dbms', 'hello')) from dual;
-  
-CONCAT('ORACLE',CONCAT('DBMS',
-------------------------------
-oracledbmshello
-  ```
+```
 
  #### ② 숫자함수
 
 - round(숫자, 반올림할 위치): 반올림
 
-  ``` sql
+``` sql
 SQL> select round(125.8888, 0) from dual;
-  
+
 ROUND(125.8888,0)
 -----------------
-              126
-  
+126
+
 SQL> select round(125.8888, 1) from dual;
-  
+
 ROUND(125.8888,1)
 -----------------
-            125.9
-  
+125.9
+
 SQL> select round(125.8888, -1) from dual;
-  
+
 ROUND(125.8888,-1)
 ------------------
-               130
-  ```
+130
+```
 
 #### ③ 변환함수
 
@@ -204,176 +204,177 @@ ROUND(125.8888,-1)
 
      ​	일 => DD (19)
 
-     ``` sql
-     SQL> select cast('2019/11/11' as date) from dual;
-     
-     CAST('0001'ASINTEGER)
-     ---------------------
-                         1
-         
-     SQL> select cast('2019년 11월 11일' as date) from dual;
-        select cast('2019년 11월 11일' as date) from dual
-                 *
-        ERROR at line 1:
-     ORA-01861: literal does not match format string
-          
-     --- 문자열이라도 /나 '이 들어 있는 date 형식이어야 한다.
-               
-     SQL> select ename, sal, to_char(sal, 'L9,999')
-         2  from emp;
-          
-     
-          ENAME                       SAL TO_CHAR(SAL,'L9,999')
-          -------------------- ---------- -----------------------
-          SMITH                       800           ￦800
-          ALLEN                      1600         ￦1,600
-          WARD                       1250         ￦1,250
-          JONES                      2975         ￦2,975
-          MARTIN                     1250         ￦1,250
-          BLAKE                      2850         ￦2,850
-          CLARK                      2450         ￦2,450
-          SCOTT                      3000         ￦3,000
-          KING                       5000         ￦5,000
-          TURNER                     1500         ￦1,500
-          ADAMS                      1100         ￦1,100
-          
-          ENAME                       SAL TO_CHAR(SAL,'L9,999')
-          -------------------- ---------- -----------------------
-          JAMES                       950           ￦950
-          FORD                       3000         ￦3,000
-          MILLER                     1300         ￦1,300
-          
-          14 rows selected.
-          
-          SQL> select ename, sal, to_char(sal, '9,999')
-            2  from emp;
-          
-          ENAME                       SAL TO_CHAR(SAL,
-          -------------------- ---------- ------------
-          SMITH                       800    800
-          ALLEN                      1600  1,600
-          WARD                       1250  1,250
-          JONES                      2975  2,975
-          MARTIN                     1250  1,250
-          BLAKE                      2850  2,850
-          CLARK                      2450  2,450
-          SCOTT                      3000  3,000
-          KING                       5000  5,000
-          TURNER                     1500  1,500
-          ADAMS                      1100  1,100
-          
-          ENAME                       SAL TO_CHAR(SAL,
-          -------------------- ---------- ------------
-          JAMES                       950    950
-          FORD                       3000  3,000
-          MILLER                     1300  1,300
-          
-          14 rows selected.
-                                                  
-          SQL> select ename, hiredate, to_char(hiredate, 'MM')
-            2  from emp
-            3  order by to_char(hiredate, 'MM');
-          
-          ENAME                HIREDATE TO_C
-          -------------------- -------- ----
-          ADAMS                83/01/12 01
-          MILLER               82/01/23 01
-          ALLEN                81/02/20 02
-          WARD                 81/02/22 02
-          JONES                81/04/02 04
-          BLAKE                81/05/01 05
-          CLARK                81/06/09 06
-          TURNER               81/09/08 09
-          MARTIN               81/09/28 09
-          KING                 81/11/17 11
-          SCOTT                82/12/09 12
-          
-          ENAME                HIREDATE TO_C
-          -------------------- -------- ----
-          SMITH                80/12/17 12
-          JAMES                81/12/03 12
-          FORD                 81/12/03 12
-          
-          14 rows selected.
-          SQL> select ename, to_char(hiredate, 'MON') 월,
-            2                     to_char(hiredate, 'MONTH') 월
-            3  from emp;
-           -- 월 앞에 0이 사라짐 : 02월->2월 (한글 세션)
-                                                  
-          ENAME                월               월
-          -------------------- ---------------- ----------------
-          SMITH                12월             12월
-          ALLEN                2월              2월
-          WARD                 2월              2월
-          JONES                4월              4월
-          MARTIN               9월              9월
-          BLAKE                5월              5월
-          CLARK                6월              6월
-          SCOTT                12월             12월
-          KING                 11월             11월
-          TURNER               9월              9월
-          ADAMS                1월              1월
-          
-          ENAME                월               월
-          -------------------- ---------------- ----------------
-          JAMES                12월             12월
-          FORD                 12월             12월
-          MILLER               1월              1월
-          
-          14 rows selected.
-            
-          SQL> alter session set nls_language = 'american';
-          
-          Session altered.
-                                               
-          SQL> select ename, to_char(hiredate, 'mon') 월 from emp;
-          
-          ENAME                월
-          -------------------- ------------------------
-          SMITH                dec
-          ALLEN                feb
-          WARD                 feb
-          JONES                apr
-          MARTIN               sep
-          BLAKE                may
-          CLARK                jun
-          SCOTT                dec
-          KING                 nov
-          TURNER               sep
-          ADAMS                jan
-          
-          ENAME                월
-          -------------------- ------------------------
-          JAMES                dec
-          FORD                 dec
-          MILLER               jan
-          
-          14 rows selected.
-          
-          SQL> select ename, to_char(hiredate, 'month') 월 from emp;
-          
-          ENAME                월
-          -------------------- -------------------------------------
-          SMITH                december
-          ALLEN                february
-          WARD                 february
-          JONES                april
-          MARTIN               september
-          BLAKE                may
-          CLARK                june
-          SCOTT                december
-          KING                 november
-          TURNER               september
-          ADAMS                january
-          
-          ENAME                월
-          -------------------- -------------------------------------
-          JAMES                december
-          FORD                 december
-          MILLER               january
-          
-          14 rows selected.
-     ```
+``` sql
+SQL> select cast('2019/11/11' as date) from dual;
+
+CAST('0001'ASINTEGER)
+---------------------
+1
+
+SQL> select cast('2019년 11월 11일' as date) from dual;
+select cast('2019년 11월 11일' as date) from dual
+*
+ERROR at line 1:
+ORA-01861: literal does not match format string
+
+--- 문자열이라도 /나 '이 들어 있는 date 형식이어야 한다.
+
+SQL> select ename, sal, to_char(sal, 'L9,999')
+2  from emp;
+
+
+ENAME                       SAL TO_CHAR(SAL,'L9,999')
+-------------------- ---------- -----------------------
+SMITH                       800           ￦800
+ALLEN                      1600         ￦1,600
+WARD                       1250         ￦1,250
+JONES                      2975         ￦2,975
+MARTIN                     1250         ￦1,250
+BLAKE                      2850         ￦2,850
+CLARK                      2450         ￦2,450
+SCOTT                      3000         ￦3,000
+KING                       5000         ￦5,000
+TURNER                     1500         ￦1,500
+ADAMS                      1100         ￦1,100
+
+ENAME                       SAL TO_CHAR(SAL,'L9,999')
+-------------------- ---------- -----------------------
+JAMES                       950           ￦950
+FORD                       3000         ￦3,000
+MILLER                     1300         ￦1,300
+
+14 rows selected.
+
+SQL> select ename, sal, to_char(sal, '9,999')
+2  from emp;
+
+ENAME                       SAL TO_CHAR(SAL,
+-------------------- ---------- ------------
+SMITH                       800    800
+ALLEN                      1600  1,600
+WARD                       1250  1,250
+JONES                      2975  2,975
+MARTIN                     1250  1,250
+BLAKE                      2850  2,850
+CLARK                      2450  2,450
+SCOTT                      3000  3,000
+KING                       5000  5,000
+TURNER                     1500  1,500
+ADAMS                      1100  1,100
+
+ENAME                       SAL TO_CHAR(SAL,
+-------------------- ---------- ------------
+JAMES                       950    950
+FORD                       3000  3,000
+MILLER                     1300  1,300
+
+14 rows selected.
+
+SQL> select ename, hiredate, to_char(hiredate, 'MM')
+2  from emp
+3  order by to_char(hiredate, 'MM');
+
+ENAME                HIREDATE TO_C
+-------------------- -------- ----
+ADAMS                83/01/12 01
+MILLER               82/01/23 01
+ALLEN                81/02/20 02
+WARD                 81/02/22 02
+JONES                81/04/02 04
+BLAKE                81/05/01 05
+CLARK                81/06/09 06
+TURNER               81/09/08 09
+MARTIN               81/09/28 09
+KING                 81/11/17 11
+SCOTT                82/12/09 12
+
+ENAME                HIREDATE TO_C
+-------------------- -------- ----
+SMITH                80/12/17 12
+JAMES                81/12/03 12
+FORD                 81/12/03 12
+
+14 rows selected.
+                                        
+SQL> select ename, to_char(hiredate, 'MON') 월,
+2  from emp;
+-- 월 앞에 0이 사라짐 : 02월->2월 (한글 세션)
+
+ENAME                월               
+-------------------- ---------------- 
+SMITH                12월             
+ALLEN                2월              
+WARD                 2월             
+JONES                4월              
+MARTIN               9월            
+BLAKE                5월              
+CLARK                6월              
+SCOTT                12월             
+KING                 11월             
+TURNER               9월              
+ADAMS                1월              
+
+ENAME                월               
+-------------------- ---------------- 
+JAMES                12월             
+FORD                 12월             
+MILLER               1월              
+
+14 rows selected.
+
+SQL> alter session set nls_language = 'american';
+
+Session altered.
+
+SQL> select ename, to_char(hiredate, 'mon') 월 from emp;
+
+ENAME                월
+-------------------- ------------------------
+SMITH                dec
+ALLEN                feb
+WARD                 feb
+JONES                apr
+MARTIN               sep
+BLAKE                may
+CLARK                jun
+SCOTT                dec
+KING                 nov
+TURNER               sep
+ADAMS                jan
+
+ENAME                월
+-------------------- ------------------------
+JAMES                dec
+FORD                 dec
+MILLER               jan
+
+14 rows selected.
+
+SQL> select ename, to_char(hiredate, 'month') 월 from emp;
+
+ENAME                월
+-------------------- -------------------------------------
+SMITH                december
+ALLEN                february
+WARD                 february
+JONES                april
+MARTIN               september
+BLAKE                may
+CLARK                june
+SCOTT                december
+KING                 november
+TURNER               september
+ADAMS                january
+
+ENAME                월
+-------------------- -------------------------------------
+JAMES                december
+FORD                 december
+MILLER               january
+
+14 rows selected.
+
+```
 
 #### ④ 날짜함수
 
@@ -381,11 +382,11 @@ ROUND(125.8888,-1)
    - sysdate - 오늘 날짜
 
 ``` sql
-  SQL> select sysdate-5, sysdate, sysdate+5 from dual;
-  
-  SYSDATE- SYSDATE  SYSDATE+
-  -------- -------- --------
-  19/12/14 19/12/19 19/12/24
+SQL> select sysdate-5, sysdate, sysdate+5 from dual;
+
+SYSDATE- SYSDATE  SYSDATE+
+-------- -------- --------
+19/12/14 19/12/19 19/12/24
 ```
 
 #### ⑤ null처리 함수
@@ -396,41 +397,41 @@ ROUND(125.8888,-1)
   - 표현값 1 = null이 아닌 경우
   - 표현값 2 = null인 경우
 
-***invliad number 발생의 기준: desc emp; 로 comm의 데이터 타입이 number인데 '신입사원'은 문자임**
+***invliad number 발생의 기준: comm의 데이터 타입이 number인데 '신입사원'은 문자임**
 
 **=> 타입을 맞춰줘야 한다!**
 
 ``` sql
-  SQL> select ename, sal, comm, nvl(to_char(comm), '신입사원')
-    2  from emp;
-  
-  ENAME                       SAL       COMM NVL(TO_CHAR(COMM),'신입사원')
+SQL> select ename, sal, comm, nvl(to_char(comm), '신입사원')
+  2  from emp;
+
+ENAME                       SAL       COMM NVL(TO_CHAR(COMM),'신입사원')
 -------------------- ---------- ---------- --------------------------------
   SMITH                       800            신입사원
-ALLEN                      1600        300 300
+  ALLEN                      1600        300 300
   WARD                       1250        500 500
-JONES                      2975            신입사원
+  JONES                      2975            신입사원
   MARTIN                     1250       1400 1400
-BLAKE                      2850            신입사원
+  BLAKE                      2850            신입사원
   CLARK                      2450            신입사원
-SCOTT                      3000            신입사원
+  SCOTT                      3000            신입사원
   KING                       5000            신입사원
-TURNER                     1500          0 0
+  TURNER                     1500          0 0
   ADAMS                      1100            신입사원
 
-  ENAME                       SAL       COMM NVL(TO_CHAR(COMM),'신입사원')
+ENAME                       SAL       COMM NVL(TO_CHAR(COMM),'신입사원')
 -------------------- ---------- ---------- --------------------------------
   JAMES                       950            신입사원
   FORD                       3000            신입사원
   MILLER                     1300            신입사원
 
   14 rows selected
-  
-  SQL> select ename, sal, comm, nvl2(to_char(comm), '영업부', '타부서')
-    2  from emp;
-  
-  ENAME                       SAL       COMM NVL2(TO_CHAR(COMM)
-  -------------------- ---------- ---------- ------------------
+
+SQL> select ename, sal, comm, nvl2(to_char(comm), '영업부', '타부서')
+  2  from emp;
+
+ENAME                       SAL       COMM NVL2(TO_CHAR(COMM)
+-------------------- ---------- ---------- ------------------
   SMITH                       800            타부서
   ALLEN                      1600        300 영업부
   WARD                       1250        500 영업부
@@ -442,19 +443,19 @@ TURNER                     1500          0 0
   KING                       5000            타부서
   TURNER                     1500          0 영업부
   ADAMS                      1100            타부서
-  
-  ENAME                       SAL       COMM NVL2(TO_CHAR(COMM)
-  -------------------- ---------- ---------- ------------------
+
+ENAME                       SAL       COMM NVL2(TO_CHAR(COMM)
+-------------------- ---------- ---------- ------------------
   JAMES                       950            타부서
   FORD                       3000            타부서
   MILLER                     1300            타부서
-  
+
   14 rows selected.
 ```
 
   ### 2) 그룹함수
 
-- group by를 적용한 후에 사용할 함수
+- **group by**를 적용한 후에 사용하는 함수
 - sum, avg, max, min, count 등
 
 
@@ -465,42 +466,42 @@ TURNER                     1500          0 0
 select 컬럼...
 from 테이블...
 where 조건
-group by 그룹화할 컬럼명(함수를 포함한 식도 가능)
-having  group by한 결과에 적용할 조건
+group by 그룹화할 컬럼명(함수를 포함한 "식"도 가능)
+having  'group by한 결과'에 적용할 조건
 order by 정렬할 컬럼명								--순서주의!!
 ```
 
-  - 테이블에 저장된 레코드를 그룹화 하여 분류하고 싶은 경우 사용
+  - 테이블에 저장된 레코드를 `그룹화` 하여 분류하고 싶은 경우 사용
 
-  - **그룹함수() -> 공백이 있으면 안 세므로 primary key인 컬럼을 지정한다.** ex) empno
+  - **그룹함수() -> NULL이 있으면 그 레코드는 세지 않으므로 `primary key`인 컬럼을 지정한다.** ex) empno
 
   - **select절에는 group by절에 명시한 컬럼명과 그룹함수만 사용할 수 있다.**
 
-    -> group by deptno,+a 했으면 select deptno,+a, 그룹함수()  만 가능
+    => group by deptno,`+a` 했으면 select deptno,`+a`, `그룹함수()` 만 가능
 
 ``` sql
-  SQL> select deptno, count(empno)
-  2  from emp
-  3  group by deptno;
-  
-    	DEPTNO COUNT(EMPNO)
-	---------- ------------
-        	30            6
-       		20            5
-        	10            3
-        	
+SQL> select deptno, count(empno)
+2  from emp
+3  group by deptno;
+
+DEPTNO COUNT(EMPNO)
+---------- ------------
+30            6
+20            5
+10            3
+
 SQL> select deptno, job, count(empno)
-  2  from emp
-  3  group by deptno;
+2  from emp
+3  group by deptno;
 select deptno, job, count(empno)
-               *
+*
 ERROR at line 1:
 ORA-00979: not a GROUP BY expression
 
 -- 직업별 연봉 평균
 SQL> select job, avg(sal)
-  2  from emp
-  3  group by job;
+2  from emp
+3  group by job;
 
 JOB                  AVG(SAL)
 ------------------ ----------
@@ -509,7 +510,7 @@ SALESMAN                 1400
 PRESIDENT                5000
 MANAGER            2758.33333
 ANALYST                  3000        
-  
+
 ```
 
 - 데이터가 복잡한 경우 group by 절에 두 개 이상의 컬럼을 명시할 수 있다.
@@ -634,7 +635,7 @@ CLERK                       3
 
 
 
-##### nvl함수
+##### *nvl함수
 
 ``` sql
 select nvl(to_char(DEPARTMENT_ID), 'NO Department') 부서번호, round(avg(SALARY),0) 평균급여
