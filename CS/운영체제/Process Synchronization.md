@@ -496,7 +496,11 @@ CPU를 빼앗기지 않고 **<u>고급 언어</u>의 critical section**을 모�
 
 **[세마포어의 Block & Wakeup 구현]**
 
-특별히 lock 관점에서 Block & Wakeup 방식을 `sleep lock`이라고 부른다.
+특별히 *lock 관점에서* Block & Wakeup 방식을 `sleep lock`이라고 부른다.
+
+> Block & Wakeup 알고리즘은 `lock 방식` 외에도 `enable/disable interrupt 방식`에서도 **순서를 기다릴 때**에 사용된다.
+>
+> => 이 때에는 `sleep lock`이라고 부르지 않는다.
 
 요청한 `공유 자원`을 얻지 못하면, 해당 프로세스를 block 시켜 CPU를 쓸데없이 할당하지 않도록 한다. 즉 자원을 얻지 못한 프로세스는 `봉쇄(blocked)` 상태가 된다.
 
